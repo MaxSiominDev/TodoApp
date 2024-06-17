@@ -40,7 +40,6 @@ android {
     }
     buildFeatures {
         compose = true
-        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
@@ -73,14 +72,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Views
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-
-    // NavigationComponent
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-
     // Dagger
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
@@ -88,12 +79,12 @@ dependencies {
     // Timber
     implementation(libs.timber)
 
-    // Timber
     implementation(libs.kotlinx.datetime)
 
-    // Room DB
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.room.compiler)
-    implementation(libs.androidx.room.ktx)
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+    implementation(project(":navdestinations"))
+
+    implementation(project(":common"))
 
 }

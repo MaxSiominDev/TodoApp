@@ -5,12 +5,12 @@ import androidx.room.Dao
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
-import dev.maxsiomin.todoapp.common.data.mappers.BidirectionalMapper
-import dev.maxsiomin.todoapp.data.local.TodoDao
-import dev.maxsiomin.todoapp.data.local.TodoDatabase
-import dev.maxsiomin.todoapp.data.local.TodoItemEntity
-import dev.maxsiomin.todoapp.data.mappers.TodoItemMapper
-import dev.maxsiomin.todoapp.domain.model.TodoItem
+import dev.maxsiomin.common.data.mappers.BidirectionalMapper
+import dev.maxsiomin.todoapp.feature.todolist.data.local.TodoDao
+import dev.maxsiomin.todoapp.feature.todolist.data.local.TodoDatabase
+import dev.maxsiomin.todoapp.feature.todolist.data.local.TodoItemEntity
+import dev.maxsiomin.todoapp.feature.todolist.data.mappers.TodoItemMapper
+import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import javax.inject.Singleton
 
 @Module
@@ -22,23 +22,23 @@ class AppModule(private val context: Context) {
 
     @Singleton
     @Provides
-    fun provideTodoDatabase(context: Context): TodoDatabase {
+    fun provideTodoDatabase(context: Context): dev.maxsiomin.todoapp.feature.todolist.data.local.TodoDatabase {
         return Room.databaseBuilder(
             context,
-            klass = TodoDatabase::class.java,
-            name = TodoDatabase.DATABASE_NAME,
+            klass = dev.maxsiomin.todoapp.feature.todolist.data.local.TodoDatabase::class.java,
+            name = dev.maxsiomin.todoapp.feature.todolist.data.local.TodoDatabase.DATABASE_NAME,
         ).build()
     }
 
     @Singleton
     @Provides
-    fun provideTodoDao(database: TodoDatabase): TodoDao {
+    fun provideTodoDao(database: dev.maxsiomin.todoapp.feature.todolist.data.local.TodoDatabase): dev.maxsiomin.todoapp.feature.todolist.data.local.TodoDao {
         return database.dao
     }
 
     @Provides
-    fun provideTodoItemMapper(): BidirectionalMapper<TodoItemEntity, TodoItem> {
-        return TodoItemMapper()
+    fun provideTodoItemMapper(): dev.maxsiomin.common.data.mappers.BidirectionalMapper<dev.maxsiomin.todoapp.feature.todolist.data.local.TodoItemEntity, dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem> {
+        return dev.maxsiomin.todoapp.feature.todolist.data.mappers.TodoItemMapper()
     }
 
 }
