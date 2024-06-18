@@ -1,6 +1,5 @@
 package dev.maxsiomin.todoapp.core.presentation.theme
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -15,15 +14,15 @@ data class AppTypography(
     val subhead: TextStyle,
 )
 
-internal val appTypography
-    @Composable get() = AppTypography(
+internal fun appTypography(colorScheme: AppColorScheme): AppTypography {
+    return AppTypography(
         largeTitle = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
             fontSize = 32.sp,
             lineHeight = 38.sp,
             letterSpacing = 0.5.sp,
-            color = AppTheme.colors.support,
+            color = colorScheme.support,
         ),
         title = TextStyle(
             fontFamily = FontFamily.Default,
@@ -58,3 +57,4 @@ internal val appTypography
             color = Color.Unspecified,
         ),
     )
+}

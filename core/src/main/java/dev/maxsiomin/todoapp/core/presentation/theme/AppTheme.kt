@@ -6,26 +6,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-
-@Composable
-fun AppThemeComposable(
-    isDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
-) {
-    val colorScheme = if (isDarkTheme) darkColors else lightColors
-    val elevations = Elevations(card = 1.dp, default = 1.dp)
-    CompositionLocalProvider(
-        LocalAppColorScheme provides colorScheme,
-        LocalAppTypography provides appTypography,
-        LocalElevations provides elevations
-    ) {
-        content()
-    }
-}
 
 object AppTheme {
+
+    @Composable
+    operator fun invoke(
+        isDarkTheme: Boolean = isSystemInDarkTheme(),
+        content: @Composable () -> Unit,
+    ) {
+        val colorScheme = if (isDarkTheme) darkColors else lightColors
+        val typography = appTypography(colorScheme)
+        CompositionLocalProvider(
+            LocalAppColorScheme provides colorScheme,
+            LocalAppTypography provides typography,
+        ) {
+            content()
+        }
+    }
 
     val colors: AppColorScheme
         @Composable get() {
@@ -53,9 +50,3 @@ val LocalAppTypography = compositionLocalOf {
         subhead = TextStyle.Default,
     )
 }
-
-data class Elevations(val card: Dp = 0.dp, val default: Dp = 0.dp)
-
-// Define a CompositionLocal global object with a default
-// This instance can be accessed by all composables in the app
-val LocalElevations = compositionLocalOf { Elevations() }

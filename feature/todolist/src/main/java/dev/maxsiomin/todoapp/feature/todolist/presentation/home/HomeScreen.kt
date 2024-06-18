@@ -8,7 +8,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
-import dev.maxsiomin.todoapp.core.presentation.theme.LocalElevations
 
 @Composable
 internal fun HomeScreen(navController: NavHostController) {
@@ -23,7 +22,6 @@ internal fun HomeScreen(navController: NavHostController) {
 private fun HomeScreenContent(state: HomeViewModel.State, onEvent: (HomeViewModel.Event) -> Unit) {
     Column {
         Text(text = "Hello from home screen", style = AppTheme.typography.largeTitle)
-        Text(text = LocalElevations.current.toString())
     }
 
 }
