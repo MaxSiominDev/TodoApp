@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.daggerHilt)
     kotlin("kapt")
 }
 
@@ -38,6 +39,9 @@ android {
     buildFeatures {
         compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
 }
 
 dependencies {
@@ -58,10 +62,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Dagger
-    implementation(libs.dagger)
-    kapt(libs.dagger.compiler)
-
     // Timber
     implementation(libs.timber)
 
@@ -77,5 +77,10 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(project(":navdestinations"))
+
+    // Hilt for DI
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
 }

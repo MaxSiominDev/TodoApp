@@ -17,7 +17,7 @@ import dev.maxsiomin.todoapp.TodoAppState
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProdhseApp(appState: TodoAppState) {
+fun TodoApp(appState: TodoAppState) {
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -37,6 +37,7 @@ fun ProdhseApp(appState: TodoAppState) {
     }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         Box(

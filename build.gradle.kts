@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlinxSerialization) apply false
+    alias(libs.plugins.daggerHilt) apply false
 }

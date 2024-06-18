@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.daggerHilt)
     kotlin("kapt")
 }
 
@@ -72,10 +73,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Dagger
-    implementation(libs.dagger)
-    kapt(libs.dagger.compiler)
-
     // Timber
     implementation(libs.timber)
 
@@ -86,5 +83,12 @@ dependencies {
     implementation(project(":navdestinations"))
 
     implementation(project(":common"))
+    implementation(project(":core"))
+    implementation(project(":feature:todolist"))
+
+    // Hilt for DI
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
 }

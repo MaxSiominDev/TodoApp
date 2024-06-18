@@ -1,11 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.daggerHilt)
     kotlin("kapt")
 }
 
 android {
-    namespace = "dev.maxsiomin.common"
+    namespace = "dev.maxsiomin.todoapp.core"
     compileSdk = 34
 
     defaultConfig {
@@ -36,7 +37,6 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
