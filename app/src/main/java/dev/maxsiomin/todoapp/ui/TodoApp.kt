@@ -1,5 +1,6 @@
 package dev.maxsiomin.todoapp.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import dev.maxsiomin.common.presentation.SnackbarInfo
 import dev.maxsiomin.todoapp.TodoAppState
+import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -37,13 +39,15 @@ fun TodoApp(appState: TodoAppState) {
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .background(AppTheme.colors.backPrimary),
         ) {
             TodoappNavHost(
                 appState = appState,
