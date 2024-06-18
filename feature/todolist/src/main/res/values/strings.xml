@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="high_priority">High priority</string>
+    <string name="low_priority">Low priority</string>
+</resources>

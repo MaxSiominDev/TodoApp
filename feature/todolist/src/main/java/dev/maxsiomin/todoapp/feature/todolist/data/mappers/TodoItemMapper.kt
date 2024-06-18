@@ -3,8 +3,9 @@ package dev.maxsiomin.todoapp.feature.todolist.data.mappers
 import dev.maxsiomin.common.data.mappers.BidirectionalMapper
 import dev.maxsiomin.todoapp.feature.todolist.data.local.TodoItemEntity
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
+import javax.inject.Inject
 
-internal class TodoItemMapper : BidirectionalMapper<TodoItemEntity, TodoItem> {
+internal class TodoItemMapper @Inject constructor() : BidirectionalMapper<TodoItemEntity, TodoItem> {
 
     override fun toDomain(data: TodoItemEntity): TodoItem {
         return TodoItem(

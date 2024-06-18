@@ -4,13 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import dagger.hilt.android.AndroidEntryPoint
+import dev.maxsiomin.todoapp.core.presentation.theme.AppThemeComposable
 import dev.maxsiomin.todoapp.ui.TodoApp
-import dev.maxsiomin.todoapp.core.presentation.theme.TodoAppTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -21,7 +17,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            dev.maxsiomin.todoapp.core.presentation.theme.TodoAppTheme {
+            AppThemeComposable {
                 val appState = rememberTodoAppState()
                 TodoApp(appState = appState)
             }

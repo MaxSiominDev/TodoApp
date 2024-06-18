@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.ui.tooling)
     implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -73,6 +74,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     implementation(project(":common"))
+    implementation(project(":core"))
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
@@ -82,5 +84,6 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
 
 }
