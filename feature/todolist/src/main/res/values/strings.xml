@@ -2,5 +2,21 @@
 <resources>
 
     <string name="high_priority">High priority</string>
+    <string name="high">High</string>
     <string name="low_priority">Low priority</string>
+    <string name="low">Low</string>
+    <string name="default_">Default</string>
+    <string name="info">Info</string>
+    <string name="my_todos">My todos</string>
+    <string name="completed">Completed — %1$s</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="add">Add todo</string>
+    <string name="go_back_without_saving">Go back without saving</string>
+    <string name="save">Save</string>
+    <string name="what_to_do">What to do…</string>
+    <string name="priority">Priority</string>
+    <string name="default_priority">No</string>
+    <string name="complete_before">Complete before</string>
+    <string name="delete">Delete</string>
+
 </resources>

@@ -3,6 +3,7 @@ package dev.maxsiomin.todoapp.feature.todolist.presentation.home
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
@@ -17,7 +18,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
 import dev.maxsiomin.common.extensions.now
+import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
@@ -71,9 +74,17 @@ internal fun TodoItemComposable(
         }
 
         Text(
+            modifier = Modifier
+                .padding(8.dp)
+                .weight(1f),
             text = todoItem.description,
             maxLines = 3,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Icon(
+            painter = painterResource(id = R.drawable.icon_info),
+            contentDescription = stringResource(id = R.string.info),
         )
     }
 
@@ -83,8 +94,9 @@ internal fun TodoItemComposable(
 private fun HighPriorityIcon(modifier: Modifier = Modifier) {
     Icon(
         modifier = modifier,
+        tint = AppTheme.colors.colorRed,
         painter = painterResource(id = R.drawable.icon_priority_high),
-        contentDescription = stringResource(R.string.high_priority)
+        contentDescription = stringResource(R.string.high_priority),
     )
 }
 
@@ -92,6 +104,7 @@ private fun HighPriorityIcon(modifier: Modifier = Modifier) {
 private fun LowPriorityIcon(modifier: Modifier = Modifier) {
     Icon(
         modifier = modifier,
+        tint = AppTheme.colors.colorGrayLight,
         painter = painterResource(id = R.drawable.icon_priority_low),
         contentDescription = stringResource(R.string.low_priority)
     )

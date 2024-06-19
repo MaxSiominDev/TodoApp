@@ -11,4 +11,8 @@ internal interface TodoItemsRepository {
 
     suspend fun addTodoItem(item: TodoItem)
 
+    suspend fun getTodoItemById(id: String): Resource<TodoItem, DataError>
+
+    suspend fun deleteTodoItem(item: TodoItem)
+
 }

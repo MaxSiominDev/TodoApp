@@ -45,7 +45,7 @@ internal fun appTypography(colorScheme: AppColorScheme): AppTypography {
             fontSize = 16.sp,
             lineHeight = 20.sp,
             letterSpacing = 0.5.sp,
-            color = colorScheme.labelTertiary,
+            color = colorScheme.labelPrimary,
         ),
         subhead = TextStyle(
             fontFamily = FontFamily.Default,

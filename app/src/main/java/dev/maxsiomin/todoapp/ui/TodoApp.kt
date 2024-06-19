@@ -47,7 +47,6 @@ fun TodoApp(appState: TodoAppState) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(AppTheme.colors.backPrimary),
         ) {
             TodoappNavHost(
                 appState = appState,

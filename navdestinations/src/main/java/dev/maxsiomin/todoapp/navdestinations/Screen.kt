@@ -8,6 +8,10 @@ sealed class Screen {
     data object HomeScreen : Screen()
 
     @Serializable
-    data object EditScreen : Screen()
+    data class EditScreen(val itemId: String?) : Screen() {
+        object Args {
+            val itemId = "itemId"
+        }
+    }
 
 }
