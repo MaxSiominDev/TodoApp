@@ -13,6 +13,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetTodoItemByIdUseCase
 import dev.maxsiomin.todoapp.navdestinations.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ import javax.inject.Inject
 internal class EditViewModel @Inject constructor(
     private val addTodoItemUseCase: AddTodoItemUseCase,
     private val getTodoItemByIdUseCase: GetTodoItemByIdUseCase,
+    private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val dateFormatter: DateFormatter,
     private val uuidGenerator: UuidGenerator,
     savedStateHandle: SavedStateHandle,
@@ -186,6 +188,13 @@ internal class EditViewModel @Inject constructor(
     private fun onDelete() {
         if (isSavingOrDeleting) return
         isSavingOrDeleting = true
+        viewModelScope.launch {
+            // If is editing an item, then delete it, otherwise just go back
+            todoItem?.let {
+                deleteTodoItemUseCase(it)
+            }
+            onEffect(Effect.GoBack)
+        }
     }
 
     private fun onNewDate(newDate: LocalDate) = _state.update {

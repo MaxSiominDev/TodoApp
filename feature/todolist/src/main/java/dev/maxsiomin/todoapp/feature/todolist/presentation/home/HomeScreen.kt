@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -18,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,6 +34,7 @@ import dev.maxsiomin.common.presentation.SnackbarCallback
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.feature.todolist.R
+import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.navdestinations.Screen
 
 @Composable
@@ -57,9 +62,11 @@ internal fun HomeScreen(navController: NavHostController, showSnackbar: Snackbar
 
 @Composable
 private fun HomeScreenContent(state: HomeViewModel.State, onEvent: (HomeViewModel.Event) -> Unit) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(AppTheme.colors.backPrimary)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AppTheme.colors.backPrimary)
+    ) {
         Column(Modifier.fillMaxSize()) {
             Column(
                 Modifier
@@ -77,6 +84,16 @@ private fun HomeScreenContent(state: HomeViewModel.State, onEvent: (HomeViewMode
                 )
             }
 
+            LazyColumn(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(AppTheme.colors.backSecondary)
+            ) {
+                items(state.todoItems) {
+                    TodoItemComposable(todoItem = it, onEvent = onEvent)
+                }
+            }
         }
 
         FabAdd(onEvent)
@@ -104,5 +121,6 @@ private fun BoxScope.FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Mo
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreenContent(state = HomeViewModel.State(emptyList(), "5"), onEvent = {})
+    val items = emptyList<TodoItem>()
+    HomeScreenContent(state = HomeViewModel.State(items, "5"), onEvent = {})
 }

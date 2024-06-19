@@ -27,7 +27,7 @@ internal class TodoItemMapper @Inject constructor() : BidirectionalMapper<TodoIt
             progress = domain.progress,
             created = domain.created,
             modified = domain.modified,
-            deadline = domain.modified,
+            deadline = domain.deadline,
         )
     }
 

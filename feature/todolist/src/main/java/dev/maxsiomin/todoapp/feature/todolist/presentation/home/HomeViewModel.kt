@@ -9,6 +9,8 @@ import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsRepository
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetAllTodoItemsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -18,6 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,
+    private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
+    private val addTodoItemUseCase: AddTodoItemUseCase,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
     data class State(
@@ -61,14 +65,24 @@ internal class HomeViewModel @Inject constructor(
 
 
     sealed class Event {
-        data class CheckboxValueChanged(val newValue: Boolean) : Event()
+        data class CheckboxValueChanged(val newValue: Boolean, val item: TodoItem) : Event()
         data object AddClicked : Event()
+        data class EditItem(val item: TodoItem) : Event()
     }
 
     override fun onEvent(event: Event) {
         when (event) {
             Event.AddClicked -> onEffect(Effect.GoToEditScreen(itemId = null))
-            is Event.CheckboxValueChanged -> TODO()
+            is Event.CheckboxValueChanged -> changeProgress(event.newValue, event.item)
+            is Event.EditItem -> onEffect(Effect.GoToEditScreen(itemId = event.item.id))
+        }
+    }
+
+    private fun changeProgress(booleanValue: Boolean, item: TodoItem) {
+        viewModelScope.launch {
+            val progress = if (booleanValue) Progress.Completed else Progress.NotCompleted
+            val editedItem = item.copy(progress = progress)
+            addTodoItemUseCase(editedItem)
         }
     }
 

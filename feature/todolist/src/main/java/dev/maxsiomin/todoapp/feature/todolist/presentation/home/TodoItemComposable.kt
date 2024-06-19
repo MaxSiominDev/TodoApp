@@ -7,13 +7,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -36,26 +37,29 @@ internal fun TodoItemComposable(
     modifier: Modifier = Modifier
 ) {
 
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier
+            .fillMaxWidth()
+            .padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
         val isChecked = when (todoItem.progress) {
             Progress.Completed -> true
             Progress.NotCompleted -> false
         }
         val uncheckedColor = if (todoItem.priority == Priority.High) {
-            MaterialTheme.colorScheme.error
+            AppTheme.colors.colorRed
         } else {
-            MaterialTheme.colorScheme.onSecondary
+            AppTheme.colors.supportSeparator
         }
         Checkbox(
             checked = isChecked,
             onCheckedChange = {
                 onEvent(
-                    HomeViewModel.Event.CheckboxValueChanged(it)
+                    HomeViewModel.Event.CheckboxValueChanged(newValue = it, item = todoItem)
                 )
             },
             colors = CheckboxDefaults.colors(
-                checkedColor = MaterialTheme.colorScheme.secondary,
-                uncheckedColor = uncheckedColor
+                checkedColor = AppTheme.colors.colorGreen,
+                uncheckedColor = uncheckedColor,
             ),
         )
 
@@ -73,6 +77,14 @@ internal fun TodoItemComposable(
             }
         }
 
+        val descriptionTextStyle = if (todoItem.progress == Progress.NotCompleted) {
+            AppTheme.typography.body
+        } else {
+            AppTheme.typography.body.copy(
+                color = AppTheme.colors.labelTertiary,
+                textDecoration = TextDecoration.LineThrough,
+            )
+        }
         Text(
             modifier = Modifier
                 .padding(8.dp)
@@ -80,12 +92,18 @@ internal fun TodoItemComposable(
             text = todoItem.description,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis,
+            style = descriptionTextStyle,
         )
 
-        Icon(
-            painter = painterResource(id = R.drawable.icon_info),
-            contentDescription = stringResource(id = R.string.info),
-        )
+        IconButton(onClick = {
+            onEvent(HomeViewModel.Event.EditItem(todoItem))
+        }) {
+            Icon(
+                tint = AppTheme.colors.labelTertiary,
+                painter = painterResource(id = R.drawable.icon_info),
+                contentDescription = stringResource(id = R.string.info),
+            )
+        }
     }
 
 }
