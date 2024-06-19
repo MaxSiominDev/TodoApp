@@ -91,7 +91,11 @@ private fun HomeScreenContent(state: HomeViewModel.State, onEvent: (HomeViewMode
                     .background(AppTheme.colors.backSecondary)
             ) {
                 items(state.todoItems) {
-                    TodoItemComposable(todoItem = it, onEvent = onEvent)
+                    TodoItemComposable(
+                        todoItem = it,
+                        onEvent = onEvent,
+                        modifier = Modifier.background(Color.White),
+                    )
                 }
             }
         }
@@ -121,6 +125,6 @@ private fun BoxScope.FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Mo
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    val items = emptyList<TodoItem>()
+    val items = emptyList<TodoItemUiModel>()
     HomeScreenContent(state = HomeViewModel.State(items, "5"), onEvent = {})
 }

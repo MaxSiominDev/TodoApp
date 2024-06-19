@@ -5,10 +5,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
+import dev.maxsiomin.todoapp.core.util.DateFormatter
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
-import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsRepository
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetAllTodoItemsUseCase
@@ -22,10 +22,13 @@ internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val addTodoItemUseCase: AddTodoItemUseCase,
+    private val dateFormatter: DateFormatter,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
+    private var items = emptyList<TodoItem>()
+
     data class State(
-        val todoItems: List<TodoItem> = emptyList(),
+        val todoItems: List<TodoItemUiModel> = emptyList(),
         val completedCount: String = "",
     )
 
@@ -33,6 +36,10 @@ internal class HomeViewModel @Inject constructor(
 
 
     init {
+        refreshItems()
+    }
+
+    private fun refreshItems() {
         viewModelScope.launch {
             getAllTodoItemsUseCase().collect { resource ->
                 when (resource) {
@@ -44,10 +51,11 @@ internal class HomeViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         val newItems = resource.data
+                        items = newItems
                         val newCount = newItems.count { item -> item.progress == Progress.Completed }
                         _state.update {
                             it.copy(
-                                todoItems = resource.data,
+                                todoItems = newItems.map { it.toTodoItemUiModel(dateFormatter) },
                                 completedCount = newCount.toString(),
                             )
                         }
@@ -65,9 +73,11 @@ internal class HomeViewModel @Inject constructor(
 
 
     sealed class Event {
-        data class CheckboxValueChanged(val newValue: Boolean, val item: TodoItem) : Event()
+        data class CheckboxValueChanged(val newValue: Boolean, val item: TodoItemUiModel) : Event()
         data object AddClicked : Event()
-        data class EditItem(val item: TodoItem) : Event()
+        data class EditItem(val item: TodoItemUiModel) : Event()
+        data class OnDeleteViaDismission(val item: TodoItemUiModel) : Event()
+        data class OnCompleteViaDismission(val item: TodoItemUiModel) : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -75,14 +85,38 @@ internal class HomeViewModel @Inject constructor(
             Event.AddClicked -> onEffect(Effect.GoToEditScreen(itemId = null))
             is Event.CheckboxValueChanged -> changeProgress(event.newValue, event.item)
             is Event.EditItem -> onEffect(Effect.GoToEditScreen(itemId = event.item.id))
+            is Event.OnCompleteViaDismission -> onCompleteViaDismission(event.item)
+            is Event.OnDeleteViaDismission -> onDeleteViaDismission(event.item)
         }
     }
 
-    private fun changeProgress(booleanValue: Boolean, item: TodoItem) {
+    private fun changeProgress(booleanValue: Boolean, todoItem: TodoItemUiModel) {
         viewModelScope.launch {
             val progress = if (booleanValue) Progress.Completed else Progress.NotCompleted
+            val item = items.firstOrNull {
+                it.id == todoItem.id
+            } ?: return@launch
             val editedItem = item.copy(progress = progress)
             addTodoItemUseCase(editedItem)
+        }
+    }
+
+    private fun onDeleteViaDismission(todoItem: TodoItemUiModel) {
+        viewModelScope.launch {
+            val item = items.firstOrNull {
+                it.id == todoItem.id
+            } ?: return@launch
+            deleteTodoItemUseCase(item)
+        }
+    }
+
+    private fun onCompleteViaDismission(todoItem: TodoItemUiModel) {
+        viewModelScope.launch {
+            val item = items.firstOrNull {
+                it.id == todoItem.id
+            } ?: return@launch
+            val completedItem = item.copy(progress = Progress.Completed)
+            addTodoItemUseCase(completedItem)
         }
     }
 

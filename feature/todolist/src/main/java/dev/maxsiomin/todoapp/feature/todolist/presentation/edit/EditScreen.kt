@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -269,21 +271,19 @@ private fun DeleteTextAndIcon(
     onEvent: (EditViewModel.Event) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.padding(4.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Button(
+        modifier = modifier,
+        onClick = { onEvent(EditViewModel.Event.DeleteIconClicked) },
+        colors = ButtonDefaults.textButtonColors(
+            contentColor = Color.Transparent,
+        ),
     ) {
-        IconButton(
-            onClick = {
-                onEvent(EditViewModel.Event.DeleteIconClicked)
-            }
-        ) {
-            Icon(
-                tint = AppTheme.colors.colorRed,
-                painter = painterResource(R.drawable.icon_delete),
-                contentDescription = stringResource(R.string.delete)
-            )
-        }
+        Icon(
+            tint = AppTheme.colors.colorRed,
+            painter = painterResource(R.drawable.icon_delete),
+            contentDescription = stringResource(R.string.delete)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = stringResource(R.string.delete),
             style = AppTheme.typography.body.copy(color = AppTheme.colors.colorRed)

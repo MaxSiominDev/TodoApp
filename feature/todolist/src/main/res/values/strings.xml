@@ -18,5 +18,6 @@
     <string name="default_priority">No</string>
     <string name="complete_before">Complete before</string>
     <string name="delete">Delete</string>
+    <string name="mark_completed">Mark completed</string>
 
 </resources>
