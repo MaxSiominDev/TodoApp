@@ -102,6 +102,7 @@ internal class EditViewModel @Inject constructor(
         data object SaveClicked : Event()
         data class NewDeadlineDateSelected(val newDate: LocalDate) : Event()
         data object SelectDeadlineDateClicked : Event()
+        data object SelectDeadlineDialogDismissed : Event()
         data object ExpandPriorityDropdown : Event()
         data object CollapsePriorityDropdown : Event()
         data class NewPrioritySelected(val newPriority: Priority) : Event()
@@ -141,6 +142,10 @@ internal class EditViewModel @Inject constructor(
             }
 
             Event.CloseClicked -> onEffect(Effect.GoBack)
+
+            Event.SelectDeadlineDialogDismissed -> _state.update {
+                it.copy(showSelectDeadlineDateDialog = false)
+            }
         }
     }
 

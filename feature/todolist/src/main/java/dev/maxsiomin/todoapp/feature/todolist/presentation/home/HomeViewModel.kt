@@ -15,7 +15,6 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetAllTodoItemsUseC
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,8 +30,7 @@ internal class HomeViewModel @Inject constructor(
     data class State(
         val todoItems: List<TodoItemUiModel> = emptyList(),
         val completedCount: String = "",
-        val hideActive: Boolean = false,
-        val randomId: String = UUID.randomUUID().toString(),
+        val hideCompleted: Boolean = false,
     )
 
     override val _state = MutableStateFlow(State())
@@ -64,15 +62,14 @@ internal class HomeViewModel @Inject constructor(
     private fun processTodoItems(newItems: List<TodoItem>) {
         items = newItems
         val newCount = newItems.count { item -> item.progress == Progress.Completed }
-        val filteredItemsByIsActive = if (state.value.hideActive) {
+        val filteredItemsByIsCompleted = if (state.value.hideCompleted) {
             newItems.filter { it.progress == Progress.NotCompleted }
         } else {
             newItems
         }
         _state.update {
             it.copy(
-                randomId = UUID.randomUUID().toString(),
-                todoItems = filteredItemsByIsActive.map { item -> item.toTodoItemUiModel(dateFormatter) },
+                todoItems = filteredItemsByIsCompleted.map { item -> item.toTodoItemUiModel(dateFormatter) },
                 completedCount = newCount.toString(),
             )
         }
@@ -91,7 +88,7 @@ internal class HomeViewModel @Inject constructor(
         data class EditItem(val item: TodoItemUiModel) : Event()
         data class OnDeleteViaDismission(val item: TodoItemUiModel) : Event()
         data class OnCompleteViaDismission(val item: TodoItemUiModel) : Event()
-        data object IconHideActiveClicked : Event()
+        data object IconHideCompletedClicked : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -101,7 +98,7 @@ internal class HomeViewModel @Inject constructor(
             is Event.EditItem -> onEffect(Effect.GoToEditScreen(itemId = event.item.id))
             is Event.OnCompleteViaDismission -> onCompleteViaDismission(event.item)
             is Event.OnDeleteViaDismission -> onDeleteViaDismission(event.item)
-            Event.IconHideActiveClicked -> iconHideActiveClicked()
+            Event.IconHideCompletedClicked -> iconHideCompletedClicked()
         }
     }
 
@@ -135,9 +132,9 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun iconHideActiveClicked() {
+    private fun iconHideCompletedClicked() {
         _state.update {
-            it.copy(hideActive = it.hideActive.not())
+            it.copy(hideCompleted = it.hideCompleted.not())
         }
         processTodoItems(items)
     }

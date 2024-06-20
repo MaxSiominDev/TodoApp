@@ -17,4 +17,8 @@
     <string name="complete_before">Сделать до</string>
     <string name="delete">Удалить</string>
     <string name="mark_completed">Отметить выполненным</string>
+    <string name="show_completed">Показать активные</string>
+    <string name="hide_completed">Скрыть активные</string>
+    <string name="cancel">Отменить</string>
+    <string name="new_">Создать</string>
 </resources>

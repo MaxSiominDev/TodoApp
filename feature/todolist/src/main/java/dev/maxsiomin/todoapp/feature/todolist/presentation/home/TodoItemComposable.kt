@@ -22,6 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,20 +48,22 @@ internal fun TodoItemComposable(
     modifier: Modifier = Modifier
 ) {
 
+    val currentItem = rememberUpdatedState(todoItem)
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             when (it) {
                 SwipeToDismissBoxValue.StartToEnd -> {
-                    onEvent(HomeViewModel.Event.OnCompleteViaDismission(todoItem))
+                    onEvent(HomeViewModel.Event.OnCompleteViaDismission(currentItem.value))
+                    false
                 }
 
                 SwipeToDismissBoxValue.EndToStart -> {
-                    onEvent(HomeViewModel.Event.OnDeleteViaDismission(todoItem))
+                    onEvent(HomeViewModel.Event.OnDeleteViaDismission(currentItem.value))
+                    false
                 }
 
-                SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
+                SwipeToDismissBoxValue.Settled -> false
             }
-            return@rememberSwipeToDismissBoxState false
         }
     )
     val notCompleted = todoItem.progress == Progress.NotCompleted

@@ -18,16 +18,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -47,7 +54,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import dev.maxsiomin.common.extensions.now
-import dev.maxsiomin.common.presentation.components.DatePickerDialog
+import dev.maxsiomin.common.extensions.toEpochMillis
+import dev.maxsiomin.common.extensions.toLocalDate
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.feature.todolist.R
@@ -107,6 +115,7 @@ private fun EditScreenContentWithTopAppBar(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditScreenMainContent(
     state: EditViewModel.State,
@@ -114,10 +123,7 @@ private fun EditScreenMainContent(
     onEvent: (EditViewModel.Event) -> Unit
 ) {
     if (state.showSelectDeadlineDateDialog) {
-        DatePickerDialog(
-            date = state.deadlineDate,
-            onDateChange = { onEvent(EditViewModel.Event.NewDeadlineDateSelected(it)) }
-        )
+        SelectDeadlineDialog(state, onEvent)
     }
 
     Column(
@@ -148,9 +154,44 @@ private fun EditScreenMainContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SelectDeadlineDialog(
+    state: EditViewModel.State,
+    onEvent: (EditViewModel.Event) -> Unit,
+) {
+    val datePickerState =
+        rememberDatePickerState(initialSelectedDateMillis = state.deadlineDate.toEpochMillis())
+    DatePickerDialog(
+        onDismissRequest = { onEvent(EditViewModel.Event.SelectDeadlineDialogDismissed) },
+        confirmButton = {
+            TextButton(onClick = {
+
+                datePickerState.selectedDateMillis?.toLocalDate()?.let { newDate ->
+                    onEvent(EditViewModel.Event.NewDeadlineDateSelected(newDate))
+                }
+            }) {
+                Text(text = stringResource(android.R.string.ok))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                onEvent(EditViewModel.Event.SelectDeadlineDialogDismissed)
+            }) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
 @Composable
 private fun TopBar(onEvent: (EditViewModel.Event) -> Unit, background: Color, elevation: Dp) {
-    val elevationAnimation by animateDpAsState(targetValue = elevation, label = "Top App Bar Shadow")
+    val elevationAnimation by animateDpAsState(
+        targetValue = elevation,
+        label = "Top App Bar Shadow"
+    )
     Surface(modifier = Modifier.shadow(elevation = elevationAnimation)) {
         Row(
             modifier = Modifier
@@ -249,10 +290,14 @@ private fun SelectPriorityDropdown(
     onEvent: (EditViewModel.Event) -> Unit
 ) {
     DropdownMenu(
+        modifier = Modifier.background(AppTheme.colors.backSecondary),
         expanded = state.priorityDropdownExpanded,
         onDismissRequest = { onEvent(EditViewModel.Event.CollapsePriorityDropdown) }
     ) {
         DropdownMenuItem(
+            colors = MenuDefaults.itemColors(
+                textColor = AppTheme.colors.labelPrimary,
+            ),
             text = { Text(stringResource(R.string.low)) },
             onClick = { onEvent(EditViewModel.Event.NewPrioritySelected(Priority.Low)) },
             leadingIcon = {
@@ -264,11 +309,17 @@ private fun SelectPriorityDropdown(
             }
         )
         DropdownMenuItem(
+            colors = MenuDefaults.itemColors(
+                textColor = AppTheme.colors.labelPrimary,
+            ),
             text = { Text(stringResource(R.string.default_)) },
             onClick = { onEvent(EditViewModel.Event.NewPrioritySelected(Priority.Default)) },
             leadingIcon = { Spacer(modifier = Modifier.width(24.dp)) }
         )
         DropdownMenuItem(
+            colors = MenuDefaults.itemColors(
+                textColor = AppTheme.colors.colorRed,
+            ),
             text = { Text(stringResource(R.string.high)) },
             onClick = { onEvent(EditViewModel.Event.NewPrioritySelected(Priority.High)) },
             leadingIcon = {

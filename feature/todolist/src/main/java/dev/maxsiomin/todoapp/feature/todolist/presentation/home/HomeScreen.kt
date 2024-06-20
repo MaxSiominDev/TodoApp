@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -32,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -133,7 +133,7 @@ private fun TopBar(
             }
         }
         Spacer(modifier = Modifier.weight(1f))
-        IconHideActive(state, onEvent, Modifier.padding(end = 16.dp))
+        IconHideCompleted(state, onEvent, Modifier.padding(end = 16.dp))
     }
 }
 
@@ -155,15 +155,30 @@ private fun HomeScreenMainContent(
                 .clip(RoundedCornerShape(8.dp))
                 .background(AppTheme.colors.backSecondary)
         ) {
-            item {
-                Text(state.randomId)
-            }
-            items(state.todoItems) {
+            items(
+                items = state.todoItems,
+                key = {
+                    it.id
+                },
+            ) {
                 TodoItemComposable(
                     todoItem = it,
                     onEvent = onEvent,
-                    modifier = Modifier.background(Color.White),
+                    modifier = Modifier.background(AppTheme.colors.backSecondary),
                 )
+            }
+
+            item {
+                TextButton(
+                    modifier = Modifier
+                        .padding(start = 36.dp, bottom = 8.dp),
+                    onClick = {onEvent(HomeViewModel.Event.AddClicked)  },
+                ) {
+                    Text(
+                        text = stringResource(R.string.new_),
+                        style = AppTheme.typography.body.copy(color = AppTheme.colors.labelTertiary),
+                    )
+                }
             }
         }
 
@@ -173,19 +188,19 @@ private fun HomeScreenMainContent(
 }
 
 @Composable
-private fun IconHideActive(
+private fun IconHideCompleted(
     state: HomeViewModel.State,
     onEvent: (HomeViewModel.Event) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     IconButton(
         modifier = modifier,
-        onClick = { onEvent(HomeViewModel.Event.IconHideActiveClicked) }
+        onClick = { onEvent(HomeViewModel.Event.IconHideCompletedClicked) }
     ) {
-        val (painterRes, contentDescriptionRes) = if (state.hideActive) {
-            R.drawable.icon_show to R.string.show_active
+        val (painterRes, contentDescriptionRes) = if (state.hideCompleted) {
+            R.drawable.icon_show to R.string.show_completed
         } else {
-            R.drawable.icon_hide to R.string.hide_active
+            R.drawable.icon_hide to R.string.hide_completed
         }
         Icon(
             tint = AppTheme.colors.colorBlue,
