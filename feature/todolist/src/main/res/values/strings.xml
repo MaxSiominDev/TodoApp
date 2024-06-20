@@ -22,5 +22,6 @@
     <string name="hide_completed">Hide completed</string>
     <string name="cancel">Cancel</string>
     <string name="new_">New</string>
+    <string name="description_cannot_be_empty">Description cannot be empty</string>
 
 </resources>

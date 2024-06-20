@@ -4,10 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.maxsiomin.common.domain.resource.Resource
+import dev.maxsiomin.common.domain.resource.errorOrNull
 import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.safeArg
 import dev.maxsiomin.common.presentation.StatefulViewModel
+import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.todoapp.core.util.DateFormatter
+import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.UuidGenerator
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
@@ -15,6 +18,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetTodoItemByIdUseCase
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.ValidateDescriptionUseCase
 import dev.maxsiomin.todoapp.navdestinations.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -29,6 +33,7 @@ internal class EditViewModel @Inject constructor(
     private val addTodoItemUseCase: AddTodoItemUseCase,
     private val getTodoItemByIdUseCase: GetTodoItemByIdUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
+    private val validateDescriptionUseCase: ValidateDescriptionUseCase,
     private val dateFormatter: DateFormatter,
     private val uuidGenerator: UuidGenerator,
     savedStateHandle: SavedStateHandle,
@@ -93,6 +98,7 @@ internal class EditViewModel @Inject constructor(
 
     sealed class Effect {
         data object GoBack : Effect()
+        data class ShowMessage(val message: UiText) : Effect()
     }
 
     sealed class Event {
@@ -152,6 +158,21 @@ internal class EditViewModel @Inject constructor(
     private fun onSave() {
         if (isSavingOrDeleting) return
         isSavingOrDeleting = true
+
+        val validationResult =
+            validateDescriptionUseCase(description = state.value.description)
+
+        when (validationResult.errorOrNull()) {
+            ValidateDescriptionUseCase.DescriptionError.Empty -> {
+                onEffect(Effect.ShowMessage(
+                    UiText.StringResource(R.string.description_cannot_be_empty)
+                ))
+                isSavingOrDeleting = false
+                return
+            }
+            null -> Unit
+        }
+
         viewModelScope.launch {
             todoItem?.let { todoItem ->
                 saveEditedTodoItem(todoItem, state.value)

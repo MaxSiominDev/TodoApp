@@ -41,14 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import dev.maxsiomin.common.presentation.SnackbarCallback
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.navdestinations.Screen
 
 @Composable
-internal fun HomeScreen(navController: NavHostController, showSnackbar: SnackbarCallback) {
+internal fun HomeScreen(navController: NavHostController) {
 
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()

@@ -13,11 +13,11 @@ fun NavGraphBuilder.addTodolistNavigation(navController: NavHostController, show
 
     composable<Screen.HomeScreen> {
         it.toRoute<Screen.HomeScreen>()
-        HomeScreen(navController = navController, showSnackbar = showSnackbar)
+        HomeScreen(navController = navController)
     }
 
     composable<Screen.EditScreen> {
-        EditScreen(navController = navController)
+        EditScreen(navController = navController, showSnackbar = showSnackbar)
     }
 
 }

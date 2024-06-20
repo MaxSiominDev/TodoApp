@@ -56,6 +56,8 @@ import androidx.navigation.NavHostController
 import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.toEpochMillis
 import dev.maxsiomin.common.extensions.toLocalDate
+import dev.maxsiomin.common.presentation.SnackbarCallback
+import dev.maxsiomin.common.presentation.SnackbarInfo
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.feature.todolist.R
@@ -63,13 +65,16 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import kotlinx.datetime.LocalDate
 
 @Composable
-fun EditScreen(navController: NavHostController) {
+fun EditScreen(navController: NavHostController, showSnackbar: SnackbarCallback) {
 
     val viewModel: EditViewModel = hiltViewModel()
 
     CollectFlow(viewModel.effectFlow) { event ->
         when (event) {
             EditViewModel.Effect.GoBack -> navController.navigateUp()
+            is EditViewModel.Effect.ShowMessage -> showSnackbar(
+                SnackbarInfo(message = event.message)
+            )
         }
     }
 

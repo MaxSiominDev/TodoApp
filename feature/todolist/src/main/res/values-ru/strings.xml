@@ -21,4 +21,5 @@
     <string name="hide_completed">Скрыть активные</string>
     <string name="cancel">Отменить</string>
     <string name="new_">Создать</string>
+    <string name="description_cannot_be_empty">Описание не может быть пустым</string>
 </resources>
