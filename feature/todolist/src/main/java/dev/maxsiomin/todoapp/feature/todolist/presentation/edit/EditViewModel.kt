@@ -105,6 +105,7 @@ internal class EditViewModel @Inject constructor(
         data object ExpandPriorityDropdown : Event()
         data object CollapsePriorityDropdown : Event()
         data class NewPrioritySelected(val newPriority: Priority) : Event()
+        data object CloseClicked : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -138,6 +139,8 @@ internal class EditViewModel @Inject constructor(
             is Event.NewPrioritySelected -> _state.update {
                 it.copy(priority = event.newPriority, priorityDropdownExpanded = false)
             }
+
+            Event.CloseClicked -> onEffect(Effect.GoBack)
         }
     }
 

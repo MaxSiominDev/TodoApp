@@ -1,7 +1,10 @@
 package dev.maxsiomin.todoapp.feature.todolist.presentation.edit
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,23 +20,28 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,13 +66,53 @@ fun EditScreen(navController: NavHostController) {
     }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    EditScreenContent(state = state, onEvent = viewModel::onEvent)
+    EditScreenContentWithTopAppBar(state = state, onEvent = viewModel::onEvent)
 
 }
 
 @Composable
-private fun EditScreenContent(state: EditViewModel.State, onEvent: (EditViewModel.Event) -> Unit) {
+private fun EditScreenContentWithTopAppBar(
+    state: EditViewModel.State,
+    onEvent: (EditViewModel.Event) -> Unit
+) {
 
+    val scrollState = rememberScrollState()
+    val appBarElevation by remember {
+        derivedStateOf {
+            if (scrollState.value > 0) {
+                4.dp
+            } else {
+                0.dp
+            }
+        }
+    }
+    Scaffold(
+        topBar = {
+            TopBar(
+                onEvent = onEvent,
+                background = AppTheme.colors.backPrimary,
+                elevation = appBarElevation,
+            )
+        }
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppTheme.colors.backPrimary)
+                .padding(padding)
+        ) {
+            EditScreenMainContent(state, scrollState, onEvent)
+        }
+    }
+
+}
+
+@Composable
+private fun EditScreenMainContent(
+    state: EditViewModel.State,
+    scrollState: ScrollState,
+    onEvent: (EditViewModel.Event) -> Unit
+) {
     if (state.showSelectDeadlineDateDialog) {
         DatePickerDialog(
             date = state.deadlineDate,
@@ -76,55 +124,57 @@ private fun EditScreenContent(state: EditViewModel.State, onEvent: (EditViewMode
         Modifier
             .fillMaxSize()
             .background(AppTheme.colors.backPrimary)
+            .verticalScroll(scrollState)
     ) {
-        TopBar(onEvent)
-        val scrollState = rememberScrollState()
-        Column(modifier = Modifier.verticalScroll(scrollState)) {
-            Spacer(modifier = Modifier.height(32.dp))
-            DescriptionTextField(state, onEvent)
-            PriorityTexts(state, onEvent)
-            Spacer(modifier = Modifier.height(20.dp))
-            Spacer(
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(AppTheme.colors.supportSeparator)
-            )
-            DeadlineRow(state, onEvent)
-            Spacer(modifier = Modifier.height(28.dp))
-            Spacer(
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(AppTheme.colors.supportSeparator)
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            DeleteTextAndIcon(onEvent)
-        }
+        DescriptionTextField(state, onEvent)
+        PriorityTexts(state, onEvent)
+        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(
+            modifier = Modifier
+                .height(1.dp)
+                .fillMaxWidth()
+                .background(AppTheme.colors.supportSeparator)
+        )
+        DeadlineRow(state, onEvent)
+        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(
+            modifier = Modifier
+                .height(1.dp)
+                .fillMaxWidth()
+                .background(AppTheme.colors.supportSeparator)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        DeleteTextAndIcon(onEvent)
     }
-
 }
 
 @Composable
-private fun TopBar(onEvent: (EditViewModel.Event) -> Unit, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.icon_close),
-            contentDescription = stringResource(R.string.go_back_without_saving),
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            modifier = Modifier.clickable {
-                onEvent(EditViewModel.Event.SaveClicked)
-            },
-            text = stringResource(R.string.save),
-            style = AppTheme.typography.subhead.copy(color = AppTheme.colors.colorBlue)
-        )
+private fun TopBar(onEvent: (EditViewModel.Event) -> Unit, background: Color, elevation: Dp) {
+    val elevationAnimation by animateDpAsState(targetValue = elevation, label = "Top App Bar Shadow")
+    Surface(modifier = Modifier.shadow(elevation = elevationAnimation)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(background)
+                .padding(start = 0.dp, end = 20.dp, top = 12.dp, bottom = 0.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { onEvent(EditViewModel.Event.CloseClicked) }) {
+                Icon(
+                    tint = AppTheme.colors.labelPrimary,
+                    painter = painterResource(R.drawable.icon_close),
+                    contentDescription = stringResource(R.string.go_back_without_saving),
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                modifier = Modifier.clickable {
+                    onEvent(EditViewModel.Event.SaveClicked)
+                },
+                text = stringResource(R.string.save),
+                style = AppTheme.typography.body.copy(color = AppTheme.colors.colorBlue)
+            )
+        }
     }
 }
 
@@ -166,7 +216,6 @@ private fun DescriptionTextField(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PriorityTexts(
     state: EditViewModel.State,
@@ -183,7 +232,7 @@ private fun PriorityTexts(
         Spacer(modifier = Modifier.height(2.dp))
         val priorityTextResId = remember(state.priority) {
             when (state.priority) {
-                Priority.Default -> R.string.default_priority
+                Priority.Default -> R.string.default_
                 Priority.High -> R.string.high_priority
                 Priority.Low -> R.string.low_priority
             }
@@ -294,7 +343,7 @@ private fun DeleteTextAndIcon(
 @Preview
 @Composable
 private fun EditScreenPreview() {
-    EditScreenContent(
+    EditScreenContentWithTopAppBar(
         state = EditViewModel.State(
             deadlineDate = LocalDate.now(),
             deadlineStringDate = "June 2, 2025",
@@ -304,3 +353,15 @@ private fun EditScreenPreview() {
         ), onEvent = {}
     )
 }
+
+private fun Modifier.bottomElevation(): Modifier = this.then(Modifier.drawWithContent {
+    val paddingPx = 8.dp.toPx()
+    clipRect(
+        left = 0f,
+        top = 0f,
+        right = size.width,
+        bottom = size.height + paddingPx
+    ) {
+        this@drawWithContent.drawContent()
+    }
+})

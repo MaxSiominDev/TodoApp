@@ -1,15 +1,12 @@
 package dev.maxsiomin.common.util
 
 import android.app.Activity
-import androidx.compose.runtime.Composable
+import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 
-@Composable
-fun SetStatusBarColor(color: Color, darkIcons: Boolean) {
-    val context = LocalContext.current
+fun setStatusBarColor(context: Context, color: Color, darkIcons: Boolean) {
     val activity = context as Activity
     val window = activity.window
 

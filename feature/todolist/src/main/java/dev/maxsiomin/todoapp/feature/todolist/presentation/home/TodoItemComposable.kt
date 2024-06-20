@@ -192,7 +192,6 @@ private fun TodoItemComposableContent(
             }
         }
 
-
         IconButton(onClick = {
             onEvent(HomeViewModel.Event.EditItem(todoItem))
         }) {

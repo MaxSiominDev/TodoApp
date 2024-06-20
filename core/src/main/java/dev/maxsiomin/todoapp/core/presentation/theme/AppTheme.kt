@@ -1,12 +1,17 @@
 package dev.maxsiomin.todoapp.core.presentation.theme
 
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import dev.maxsiomin.common.util.SetStatusBarColor
+import dev.maxsiomin.common.util.setStatusBarColor
 
 object AppTheme {
 
@@ -23,7 +28,24 @@ object AppTheme {
         ) {
             content()
         }
-        SetStatusBarColor(color = colorScheme.backPrimary, darkIcons = !isDarkTheme)
+        val context = LocalContext.current as ComponentActivity
+        if (isDarkTheme) {
+            context.enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.dark(colorScheme.backPrimary.toArgb()),
+                navigationBarStyle = SystemBarStyle.dark(colorScheme.backPrimary.toArgb())
+            )
+        } else {
+            context.enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.light(
+                    colorScheme.backPrimary.toArgb(),
+                    colorScheme.colorGray.toArgb()
+                ),
+                navigationBarStyle = SystemBarStyle.light(
+                    colorScheme.backPrimary.toArgb(),
+                    colorScheme.colorGray.toArgb()
+                )
+            )
+        }
     }
 
     val colors: AppColorScheme
