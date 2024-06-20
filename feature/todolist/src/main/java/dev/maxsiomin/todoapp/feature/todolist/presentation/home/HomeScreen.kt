@@ -168,16 +168,9 @@ private fun HomeScreenMainContent(
                 )
             }
 
-            item {
-                TextButton(
-                    modifier = Modifier
-                        .padding(start = 36.dp, bottom = 8.dp),
-                    onClick = {onEvent(HomeViewModel.Event.AddClicked)  },
-                ) {
-                    Text(
-                        text = stringResource(R.string.new_),
-                        style = AppTheme.typography.body.copy(color = AppTheme.colors.labelTertiary),
-                    )
+            if (state.todoItems.isNotEmpty()) {
+                item {
+                    ButtonNew(onEvent, Modifier.padding(start = 36.dp, bottom = 8.dp),)
                 }
             }
         }
@@ -185,6 +178,19 @@ private fun HomeScreenMainContent(
         FabAdd(onEvent, Modifier.padding(end = 24.dp, bottom = 36.dp))
     }
 
+}
+
+@Composable
+private fun ButtonNew(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier = Modifier) {
+    TextButton(
+        modifier = modifier,
+        onClick = {onEvent(HomeViewModel.Event.AddClicked)  },
+    ) {
+        Text(
+            text = stringResource(R.string.new_),
+            style = AppTheme.typography.body.copy(color = AppTheme.colors.labelTertiary),
+        )
+    }
 }
 
 @Composable
