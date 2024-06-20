@@ -1,7 +1,7 @@
 [versions]
 agp = "8.4.2"
 
-kotlin = "1.9.24"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -9,15 +9,15 @@ espressoCore = "3.5.1"
 kotlinxDatetime = "0.6.0"
 lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
-composeBom = "2024.06.00"
+composeBom = "2024.05.00"
 timber = "5.0.1"
 roomRuntime = "2.6.1"
 roomKtx = "2.6.1"
-ksp = "1.9.24-1.0.20"
+ksp = "2.0.0-1.0.21"
 appcompat = "1.7.0"
 material = "1.12.0"
 navigationCompose = "2.8.0-beta03"
-kotlinxSerialization = "1.9.24"
+kotlinxSerialization = "2.0.0"
 kotlinxSerializationJson = "1.6.3"
 hiltAndroid = "2.51.1"
 hiltAndroidTesting = "2.51"
@@ -62,3 +62,4 @@ roomCompiler = { id = "androidx.room", version.ref = "roomKtx" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerialization" }
 daggerHilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

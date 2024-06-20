@@ -59,7 +59,7 @@ internal fun TodoItemComposable(
 
                 SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
             }
-            return@rememberSwipeToDismissBoxState true
+            return@rememberSwipeToDismissBoxState false
         }
     )
     val notCompleted = todoItem.progress == Progress.NotCompleted
@@ -179,7 +179,7 @@ private fun TodoItemComposableContent(
 
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(vertical = 8.dp)
                 .weight(1f),
         ) {
             DescriptionText(todoItem)

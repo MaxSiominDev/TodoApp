@@ -18,5 +18,7 @@
     <string name="complete_before">Complete before</string>
     <string name="delete">Delete</string>
     <string name="mark_completed">Mark completed</string>
+    <string name="show_active">Show active</string>
+    <string name="hide_active">Hide active</string>
 
 </resources>
