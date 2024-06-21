@@ -12,7 +12,6 @@ import dev.maxsiomin.todoapp.navdestinations.Screen
 fun NavGraphBuilder.addTodolistNavigation(navController: NavHostController, showSnackbar: SnackbarCallback) {
 
     composable<Screen.HomeScreen> {
-        it.toRoute<Screen.HomeScreen>()
         HomeScreen(navController = navController)
     }
 
