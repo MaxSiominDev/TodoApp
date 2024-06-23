@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="high_priority">Высокий приоритет</string>
+    <string name="high">Высокий</string>
+    <string name="low_priority">Низкий приоритет</string>
+    <string name="low">Низкий</string>
+    <string name="default_">По умолчанию</string>
+    <string name="info">Информация</string>
+    <string name="my_todos">Мои задачи</string>
+    <string name="completed">Выполнено  — %1$s</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="add">Добавить задачу</string>
+    <string name="go_back_without_saving">Вернуться без сохранения</string>
+    <string name="save">Сохранить</string>
+    <string name="what_to_do">Что сделать…</string>
+    <string name="priority">Приоритет</string>
+    <string name="complete_before">Сделать до</string>
+    <string name="delete">Удалить</string>
+    <string name="mark_completed">Отметить выполненным</string>
+    <string name="show_completed">Показать активные</string>
+    <string name="hide_completed">Скрыть активные</string>
+    <string name="cancel">Отменить</string>
+    <string name="new_">Создать</string>
+    <string name="description_cannot_be_empty">Описание не может быть пустым</string>
+</resources>

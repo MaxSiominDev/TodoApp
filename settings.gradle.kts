@@ -21,4 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Todo App"
 include(":app")
- 
+include(":common")
+include(":feature:todolist")
+include(":navdestinations")
+include(":core")
