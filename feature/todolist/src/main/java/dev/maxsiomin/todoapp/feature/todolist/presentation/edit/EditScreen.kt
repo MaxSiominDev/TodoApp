@@ -120,7 +120,6 @@ private fun EditScreenContentWithTopAppBar(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditScreenMainContent(
     state: EditViewModel.State,

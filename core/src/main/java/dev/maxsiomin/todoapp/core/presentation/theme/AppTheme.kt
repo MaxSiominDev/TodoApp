@@ -27,7 +27,9 @@ object AppTheme {
         ) {
             content()
         }
-        val context = LocalContext.current as ComponentActivity
+
+        // Cast will fail on Preview
+        val context = LocalContext.current as? ComponentActivity ?: return
         if (isDarkTheme) {
             context.enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.dark(colorScheme.backPrimary.toArgb()),
