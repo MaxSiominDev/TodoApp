@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
-import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import kotlinx.datetime.LocalDate
 
 @Entity(tableName = "todoItems")
@@ -19,8 +18,8 @@ internal data class TodoItemEntity(
     @ColumnInfo("priority")
     val priority: Priority,
 
-    @ColumnInfo("progress")
-    val progress: Progress,
+    @ColumnInfo("isCompleted")
+    val isCompleted: Boolean,
 
     @ColumnInfo("created")
     val created: LocalDate,

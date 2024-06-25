@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
-import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,13 +65,12 @@ internal fun TodoItemComposable(
             }
         }
     )
-    val notCompleted = todoItem.progress == Progress.NotCompleted
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
             BackgroundForSwipeToDismiss(dismissState = dismissState)
         },
-        enableDismissFromStartToEnd = notCompleted,
+        enableDismissFromStartToEnd = todoItem.isCompleted.not(),
         enableDismissFromEndToStart = true,
     ) {
         Box(modifier = modifier.fillMaxWidth()) {
@@ -145,17 +143,13 @@ private fun TodoItemComposableContent(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val isChecked = when (todoItem.progress) {
-            Progress.Completed -> true
-            Progress.NotCompleted -> false
-        }
         val uncheckedColor = if (todoItem.priority == Priority.High) {
             AppTheme.colors.colorRed
         } else {
             AppTheme.colors.supportSeparator
         }
         Checkbox(
-            checked = isChecked,
+            checked = todoItem.isCompleted,
             onCheckedChange = {
                 onEvent(
                     HomeViewModel.Event.CheckboxValueChanged(newValue = it, item = todoItem)
@@ -167,7 +161,7 @@ private fun TodoItemComposableContent(
             ),
         )
 
-        if (todoItem.progress == Progress.NotCompleted) {
+        if (todoItem.isCompleted.not()) {
             when (todoItem.priority) {
                 Priority.Default -> Unit
 
@@ -230,7 +224,7 @@ private fun LowPriorityIcon(modifier: Modifier = Modifier) {
 
 @Composable
 private fun DescriptionText(todoItem: TodoItemUiModel) {
-    val descriptionTextStyle = if (todoItem.progress == Progress.NotCompleted) {
+    val descriptionTextStyle = if (todoItem.isCompleted.not()) {
         AppTheme.typography.body
     } else {
         AppTheme.typography.body.copy(
@@ -249,7 +243,7 @@ private fun DescriptionText(todoItem: TodoItemUiModel) {
 
 private data class TodoItemPreviewParams(
     val priority: Priority,
-    val progress: Progress,
+    val isCompleted: Boolean,
 )
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
@@ -261,7 +255,7 @@ private fun TodoItemPreview(
         id = "",
         description = "Pass internship interview. Pass internship interview. Pass internship interview. Pass internship interview. Pass internship interview. Pass internship interview. Pass internship interview. Pass internship interview. Pass internship interview. Pass internship interview. ",
         priority = params.priority,
-        progress = params.progress,
+        isCompleted = params.isCompleted,
         deadline = "June 24, 2024"
     )
     AppTheme {
@@ -272,15 +266,15 @@ private fun TodoItemPreview(
 private class TodoItemPreviewParamsProvider : PreviewParameterProvider<TodoItemPreviewParams> {
     override val values = sequenceOf(
         TodoItemPreviewParams(
-            progress = Progress.Completed,
+            isCompleted = true,
             priority = Priority.High,
         ),
         TodoItemPreviewParams(
-            progress = Progress.NotCompleted,
+            isCompleted = false,
             priority = Priority.Low,
         ),
         TodoItemPreviewParams(
-            progress = Progress.NotCompleted,
+            isCompleted = false,
             priority = Priority.High,
         ),
     )

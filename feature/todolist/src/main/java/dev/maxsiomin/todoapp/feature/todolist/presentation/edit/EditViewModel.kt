@@ -13,7 +13,6 @@ import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.UuidGenerator
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
-import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.format
 import kotlinx.datetime.plus
 import javax.inject.Inject
 
@@ -184,32 +182,27 @@ internal class EditViewModel @Inject constructor(
     private suspend fun saveEditedTodoItem(todoItem: TodoItem, state: State) {
         val deadline: LocalDate? = if (state.deadLineSwitchIsOn) state.deadlineDate else null
         val modified: LocalDate = LocalDate.now()
-        val priority = state.priority
-        val description = state.description
         val newItem = todoItem.copy(
-            description = description,
+            description = state.description,
             deadline = deadline,
             modified = modified,
-            priority = priority,
+            priority = state.priority,
         )
         addTodoItemUseCase(newItem)
     }
 
     private suspend fun saveNewTodoItem(state: State) {
         val deadline: LocalDate? = if (state.deadLineSwitchIsOn) state.deadlineDate else null
-        val modified = null
-        val priority = state.priority
-        val description = state.description
         val uuid = uuidGenerator.generateUuid()
         val created = LocalDate.now()
         val newItem = TodoItem(
             id = uuid,
-            description = description,
-            priority = priority,
+            description = state.description,
+            priority = state.priority,
             created = created,
             deadline = deadline,
-            progress = Progress.NotCompleted,
-            modified = modified,
+            isCompleted = false,
+            modified = null,
         )
         addTodoItemUseCase(newItem)
     }

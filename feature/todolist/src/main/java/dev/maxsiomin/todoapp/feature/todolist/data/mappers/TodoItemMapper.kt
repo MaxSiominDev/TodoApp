@@ -12,7 +12,7 @@ internal class TodoItemMapper @Inject constructor() : BidirectionalMapper<TodoIt
             id = data.id,
             description = data.description,
             priority = data.priority,
-            progress = data.progress,
+            isCompleted = data.isCompleted,
             created = data.created,
             modified = data.modified,
             deadline = data.deadline
@@ -24,7 +24,7 @@ internal class TodoItemMapper @Inject constructor() : BidirectionalMapper<TodoIt
             id = domain.id,
             description = domain.description,
             priority = domain.priority,
-            progress = domain.progress,
+            isCompleted = domain.isCompleted,
             created = domain.created,
             modified = domain.modified,
             deadline = domain.deadline,

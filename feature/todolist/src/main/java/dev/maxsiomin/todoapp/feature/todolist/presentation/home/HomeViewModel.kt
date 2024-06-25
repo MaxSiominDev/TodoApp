@@ -6,7 +6,6 @@ import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.todoapp.feature.todolist.R
-import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
@@ -59,16 +58,16 @@ internal class HomeViewModel @Inject constructor(
 
     private fun processTodoItems(newItems: List<TodoItem>) {
         items = newItems
-        val newCount = newItems.count { item -> item.progress == Progress.Completed }
+        val newIsCompletedCount = newItems.count { it.isCompleted }
         val filteredItemsByIsCompleted = if (state.value.hideCompleted) {
-            newItems.filter { it.progress == Progress.NotCompleted }
+            newItems.filter { it.isCompleted }
         } else {
             newItems
         }
         _state.update {
             it.copy(
                 todoItems = filteredItemsByIsCompleted.map { item -> item.toTodoItemUiModel() },
-                completedCount = newCount.toString(),
+                completedCount = newIsCompletedCount.toString(),
             )
         }
     }
@@ -100,13 +99,12 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun changeProgress(booleanValue: Boolean, todoItem: TodoItemUiModel) {
+    private fun changeProgress(isCompleted: Boolean, todoItem: TodoItemUiModel) {
         viewModelScope.launch {
-            val progress = if (booleanValue) Progress.Completed else Progress.NotCompleted
             val item = items.firstOrNull {
                 it.id == todoItem.id
             } ?: return@launch
-            val editedItem = item.copy(progress = progress)
+            val editedItem = item.copy(isCompleted = isCompleted)
             addTodoItemUseCase(editedItem)
         }
     }
@@ -125,7 +123,7 @@ internal class HomeViewModel @Inject constructor(
             val item = items.firstOrNull {
                 it.id == todoItem.id
             } ?: return@launch
-            val completedItem = item.copy(progress = Progress.Completed)
+            val completedItem = item.copy(isCompleted = true)
             addTodoItemUseCase(completedItem)
         }
     }

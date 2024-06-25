@@ -37,6 +37,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,9 +46,10 @@ import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
+import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfig
+import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfigProvider
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
-import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.navdestinations.Screen
 import kotlinx.datetime.LocalDate
 
@@ -238,17 +240,19 @@ private fun BoxScope.FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Mo
 
 @Preview
 @Composable
-private fun HomeScreenPreview() {
+private fun HomeScreenPreview(
+    @PreviewParameter(PreviewConfigProvider::class) config: PreviewConfig,
+) {
     val items = mutableListOf(
         TodoItemUiModel(
             id = "",
             description = "My todo item",
             priority = Priority.High,
-            progress = Progress.Completed,
+            isCompleted = true,
             deadline = LocalDate.now().toLocalizedDate(),
         )
     )
-    AppTheme {
+    AppTheme(isDarkTheme = config.isDarkTheme) {
         HomeScreenContentWithTopAppBar(state = HomeViewModel.State(items, "5"), onEvent = {})
     }
 }

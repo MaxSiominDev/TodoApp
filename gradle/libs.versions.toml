@@ -24,6 +24,7 @@ hiltAndroidTesting = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 uiTooling = "1.6.8"
 truthVersion = "1.4.2"
+roomTesting = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +56,7 @@ hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", vers
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 google-truth = { module = "com.google.truth:truth", version.ref = "truthVersion" }
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "roomTesting" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
