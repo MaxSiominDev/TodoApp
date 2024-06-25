@@ -7,9 +7,9 @@ import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.common.domain.resource.errorOrNull
 import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.safeArg
+import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
-import dev.maxsiomin.todoapp.core.util.DateFormatter
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.UuidGenerator
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
 import kotlinx.datetime.plus
 import javax.inject.Inject
 
@@ -34,7 +35,6 @@ internal class EditViewModel @Inject constructor(
     private val getTodoItemByIdUseCase: GetTodoItemByIdUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val validateDescriptionUseCase: ValidateDescriptionUseCase,
-    private val dateFormatter: DateFormatter,
     private val uuidGenerator: UuidGenerator,
     savedStateHandle: SavedStateHandle,
 ) : StatefulViewModel<EditViewModel.State, EditViewModel.Effect, EditViewModel.Event>() {
@@ -63,7 +63,7 @@ internal class EditViewModel @Inject constructor(
             State(
                 description = "",
                 deadlineDate = date,
-                deadlineStringDate = dateFormatter.formatDate(date),
+                deadlineStringDate = date.toLocalizedDate(),
                 deadLineSwitchIsOn = false,
                 priority = Priority.Default,
             )
@@ -85,7 +85,7 @@ internal class EditViewModel @Inject constructor(
         todoItem = item
         _state.update {
             val deadlineDate = item.deadline ?: getDefaultDeadlineDate()
-            val deadlineStringDate = dateFormatter.formatDate(deadlineDate)
+            val deadlineStringDate = deadlineDate.toLocalizedDate()
             State(
                 description = item.description,
                 priority = item.priority,
@@ -229,7 +229,7 @@ internal class EditViewModel @Inject constructor(
     private fun onNewDate(newDate: LocalDate) = _state.update {
         it.copy(
             deadlineDate = newDate,
-            deadlineStringDate = dateFormatter.formatDate(newDate),
+            deadlineStringDate = newDate.toLocalizedDate(),
             showSelectDeadlineDateDialog = false,
         )
     }

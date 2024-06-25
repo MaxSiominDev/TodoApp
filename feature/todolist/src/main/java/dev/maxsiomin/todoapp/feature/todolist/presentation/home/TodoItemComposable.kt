@@ -264,7 +264,9 @@ private fun TodoItemPreview(
         progress = params.progress,
         deadline = "June 24, 2024"
     )
-    TodoItemComposable(todoItem = todoItem, onEvent = {})
+    AppTheme {
+        TodoItemComposable(todoItem = todoItem, onEvent = {})
+    }
 }
 
 private class TodoItemPreviewParamsProvider : PreviewParameterProvider<TodoItemPreviewParams> {

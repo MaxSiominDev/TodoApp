@@ -41,10 +41,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import dev.maxsiomin.common.extensions.now
+import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.feature.todolist.R
+import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
+import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.navdestinations.Screen
+import kotlinx.datetime.LocalDate
 
 @Composable
 internal fun HomeScreen(navController: NavHostController) {
@@ -234,6 +239,16 @@ private fun BoxScope.FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Mo
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    val items = emptyList<TodoItemUiModel>()
-    HomeScreenContentWithTopAppBar(state = HomeViewModel.State(items, "5"), onEvent = {})
+    val items = mutableListOf(
+        TodoItemUiModel(
+            id = "",
+            description = "My todo item",
+            priority = Priority.High,
+            progress = Progress.Completed,
+            deadline = LocalDate.now().toLocalizedDate(),
+        )
+    )
+    AppTheme {
+        HomeScreenContentWithTopAppBar(state = HomeViewModel.State(items, "5"), onEvent = {})
+    }
 }

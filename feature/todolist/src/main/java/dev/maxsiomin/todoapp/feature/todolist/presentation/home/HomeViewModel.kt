@@ -5,7 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
-import dev.maxsiomin.todoapp.core.util.DateFormatter
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
@@ -22,7 +21,6 @@ internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val addTodoItemUseCase: AddTodoItemUseCase,
-    private val dateFormatter: DateFormatter,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
     private var items = emptyList<TodoItem>()
@@ -69,7 +67,7 @@ internal class HomeViewModel @Inject constructor(
         }
         _state.update {
             it.copy(
-                todoItems = filteredItemsByIsCompleted.map { item -> item.toTodoItemUiModel(dateFormatter) },
+                todoItems = filteredItemsByIsCompleted.map { item -> item.toTodoItemUiModel() },
                 completedCount = newCount.toString(),
             )
         }
