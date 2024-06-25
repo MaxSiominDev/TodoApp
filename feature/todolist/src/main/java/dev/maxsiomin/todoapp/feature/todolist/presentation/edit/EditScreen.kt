@@ -1,5 +1,6 @@
 package dev.maxsiomin.todoapp.feature.todolist.presentation.edit
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,12 +73,16 @@ fun EditScreen(navController: NavHostController, showSnackbar: SnackbarCallback)
 
     val viewModel: EditViewModel = hiltViewModel()
 
+    val context = LocalContext.current
     CollectFlow(viewModel.effectFlow) { event ->
         when (event) {
             EditViewModel.Effect.GoBack -> navController.navigateUp()
             is EditViewModel.Effect.ShowMessage -> showSnackbar(
                 SnackbarInfo(message = event.message)
             )
+            is EditViewModel.Effect.ShowToast -> {
+                Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT,).show()
+            }
         }
     }
 
@@ -172,7 +178,6 @@ private fun SelectDeadlineDialog(
         onDismissRequest = { onEvent(EditViewModel.Event.SelectDeadlineDialogDismissed) },
         confirmButton = {
             TextButton(onClick = {
-
                 datePickerState.selectedDateMillis?.toLocalDate()?.let { newDate ->
                     onEvent(EditViewModel.Event.NewDeadlineDateSelected(newDate))
                 }

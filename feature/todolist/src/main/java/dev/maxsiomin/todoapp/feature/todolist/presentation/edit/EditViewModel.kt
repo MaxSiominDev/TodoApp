@@ -97,6 +97,7 @@ internal class EditViewModel @Inject constructor(
     sealed class Effect {
         data object GoBack : Effect()
         data class ShowMessage(val message: UiText) : Effect()
+        data class ShowToast(val message: UiText) : Effect()
     }
 
     sealed class Event {
@@ -219,12 +220,19 @@ internal class EditViewModel @Inject constructor(
         }
     }
 
-    private fun onNewDate(newDate: LocalDate) = _state.update {
-        it.copy(
-            deadlineDate = newDate,
-            deadlineStringDate = newDate.toLocalizedDate(),
-            showSelectDeadlineDateDialog = false,
-        )
+    private fun onNewDate(newDate: LocalDate) {
+        val isBeforeToday = newDate < LocalDate.now()
+        if (isBeforeToday) {
+            onEffect(Effect.ShowToast(UiText.StringResource(R.string.invalid_deadline_date)))
+            return
+        }
+        _state.update {
+            it.copy(
+                deadlineDate = newDate,
+                deadlineStringDate = newDate.toLocalizedDate(),
+                showSelectDeadlineDateDialog = false,
+            )
+        }
     }
 
     private fun getDefaultDeadlineDate(): LocalDate {

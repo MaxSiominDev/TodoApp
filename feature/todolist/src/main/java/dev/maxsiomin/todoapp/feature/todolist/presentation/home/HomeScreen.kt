@@ -144,45 +144,40 @@ private fun TopBar(
 }
 
 @Composable
-private fun HomeScreenMainContent(
+private fun BoxScope.HomeScreenMainContent(
     state: HomeViewModel.State,
     listState: LazyListState,
     onEvent: (HomeViewModel.Event) -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AppTheme.colors.backPrimary)
-    ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .padding(16.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(AppTheme.colors.backSecondary)
-        ) {
-            items(
-                items = state.todoItems,
-                key = {
-                    it.id
-                },
-            ) {
-                TodoItemComposable(
-                    todoItem = it,
-                    onEvent = onEvent,
-                    modifier = Modifier.background(AppTheme.colors.backSecondary),
-                )
-            }
 
-            if (state.todoItems.isNotEmpty()) {
-                item {
-                    ButtonNew(onEvent, Modifier.padding(start = 36.dp, bottom = 8.dp),)
-                }
-            }
+    LazyColumn(
+        state = listState,
+        modifier = Modifier
+            .padding(16.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(AppTheme.colors.backSecondary)
+    ) {
+        items(
+            items = state.todoItems,
+            key = {
+                it.id
+            },
+        ) {
+            TodoItemComposable(
+                todoItem = it,
+                onEvent = onEvent,
+                modifier = Modifier.background(AppTheme.colors.backSecondary),
+            )
         }
 
-        FabAdd(onEvent, Modifier.padding(end = 24.dp, bottom = 36.dp))
+        if (state.todoItems.isNotEmpty()) {
+            item {
+                ButtonNew(onEvent, Modifier.padding(start = 36.dp, bottom = 8.dp),)
+            }
+        }
     }
+
+    FabAdd(onEvent, Modifier.padding(end = 24.dp, bottom = 36.dp).align(Alignment.BottomEnd))
 
 }
 
@@ -223,10 +218,9 @@ private fun IconHideCompleted(
 }
 
 @Composable
-private fun BoxScope.FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier = Modifier) {
+private fun FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier = Modifier) {
     FloatingActionButton(
-        modifier = modifier
-            .align(Alignment.BottomEnd),
+        modifier = modifier,
         onClick = {
             onEvent(HomeViewModel.Event.AddClicked)
         },

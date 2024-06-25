@@ -36,6 +36,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
+import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfig
+import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfigProvider
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 
@@ -244,9 +246,10 @@ private fun DescriptionText(todoItem: TodoItemUiModel) {
 private data class TodoItemPreviewParams(
     val priority: Priority,
     val isCompleted: Boolean,
+    val isDarkTheme: Boolean,
 )
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
+@Preview
 @Composable
 private fun TodoItemPreview(
     @PreviewParameter(TodoItemPreviewParamsProvider::class) params: TodoItemPreviewParams,
@@ -258,24 +261,32 @@ private fun TodoItemPreview(
         isCompleted = params.isCompleted,
         deadline = "June 24, 2024"
     )
-    AppTheme {
-        TodoItemComposable(todoItem = todoItem, onEvent = {})
+    AppTheme(isDarkTheme = params.isDarkTheme) {
+        Box(modifier = Modifier.background(AppTheme.colors.backSecondary)) {
+            TodoItemComposable(todoItem = todoItem, onEvent = {})
+        }
     }
 }
 
 private class TodoItemPreviewParamsProvider : PreviewParameterProvider<TodoItemPreviewParams> {
-    override val values = sequenceOf(
+    private val list = listOf(
         TodoItemPreviewParams(
             isCompleted = true,
             priority = Priority.High,
+            isDarkTheme = false,
         ),
         TodoItemPreviewParams(
             isCompleted = false,
             priority = Priority.Low,
+            isDarkTheme = false,
         ),
         TodoItemPreviewParams(
             isCompleted = false,
             priority = Priority.High,
+            isDarkTheme = false,
         ),
     )
+
+    override val values =
+        (list + list.toMutableList().map { it.copy(isDarkTheme = true) }).asSequence()
 }
