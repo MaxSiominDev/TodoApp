@@ -1,6 +1,5 @@
-package dev.maxsiomin.common.data
+package dev.maxsiomin.todoapp.core.data
 
-import dev.maxsiomin.common.domain.resource.LocalError
 import dev.maxsiomin.common.domain.resource.NetworkError
 import dev.maxsiomin.common.domain.resource.Resource
 import io.ktor.client.HttpClient
@@ -10,7 +9,6 @@ import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
-import io.ktor.http.HttpStatusCode
 import kotlin.coroutines.cancellation.CancellationException
 
 suspend inline fun <reified T> HttpClient.safeGet(
@@ -22,9 +20,12 @@ suspend inline fun <reified T> HttpClient.safeGet(
         if (body == null) {
             val error = when (response.status.value) {
                 400 -> NetworkError.InvalidRequest
+                401 -> NetworkError.Unauthorized
                 404 -> NetworkError.NotFound
+                500 -> NetworkError.Server
+                else -> NetworkError.Unknown
             }
-            Resource.Error(NetworkError.EmptyResponse)
+            Resource.Error(error)
         } else {
             Resource.Success(response.body())
         }
@@ -37,6 +38,6 @@ suspend inline fun <reified T> HttpClient.safeGet(
     } catch (e: ServerResponseException) {
         Resource.Error(NetworkError.Server)
     } catch (e: Exception) {
-        Resource.Error(NetworkError.Unknown(e.message))
+        Resource.Error(NetworkError.Unknown)
     }
 }

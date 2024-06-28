@@ -1,4 +1,3 @@
 package dev.maxsiomin.todoapp.feature.todolist.data.remote.dto
 
-class AddTodoItemResponse {
-}
+typealias AddTodoItemResponse = GetTodoItemByIdResponse

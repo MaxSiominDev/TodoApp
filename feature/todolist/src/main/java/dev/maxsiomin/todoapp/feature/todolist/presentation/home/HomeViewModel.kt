@@ -6,6 +6,7 @@ import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.todoapp.feature.todolist.R
+import dev.maxsiomin.todoapp.feature.todolist.data.remote.TodoItemsApi
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
@@ -20,6 +21,8 @@ internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val addTodoItemUseCase: AddTodoItemUseCase,
+
+    private val todoItemsApi: TodoItemsApi,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
     private var items = emptyList<TodoItem>()
@@ -35,6 +38,11 @@ internal class HomeViewModel @Inject constructor(
 
     init {
         refreshItems()
+
+        viewModelScope.launch {
+            val result = todoItemsApi.getTodoItemsList()
+            result
+        }
     }
 
     private fun refreshItems() {
