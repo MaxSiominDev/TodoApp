@@ -1,5 +1,8 @@
 package dev.maxsiomin.todoapp.feature.todolist.presentation.edit
 
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -26,7 +29,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -41,13 +43,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,6 +62,8 @@ import dev.maxsiomin.common.presentation.SnackbarCallback
 import dev.maxsiomin.common.presentation.SnackbarInfo
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
+import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfig
+import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfigProvider
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import kotlinx.datetime.LocalDate
@@ -69,12 +73,16 @@ fun EditScreen(navController: NavHostController, showSnackbar: SnackbarCallback)
 
     val viewModel: EditViewModel = hiltViewModel()
 
+    val context = LocalContext.current
     CollectFlow(viewModel.effectFlow) { event ->
         when (event) {
             EditViewModel.Effect.GoBack -> navController.navigateUp()
             is EditViewModel.Effect.ShowMessage -> showSnackbar(
                 SnackbarInfo(message = event.message)
             )
+            is EditViewModel.Effect.ShowToast -> {
+                Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT,).show()
+            }
         }
     }
 
@@ -120,7 +128,6 @@ private fun EditScreenContentWithTopAppBar(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditScreenMainContent(
     state: EditViewModel.State,
@@ -171,7 +178,6 @@ private fun SelectDeadlineDialog(
         onDismissRequest = { onEvent(EditViewModel.Event.SelectDeadlineDialogDismissed) },
         confirmButton = {
             TextButton(onClick = {
-
                 datePickerState.selectedDateMillis?.toLocalDate()?.let { newDate ->
                     onEvent(EditViewModel.Event.NewDeadlineDateSelected(newDate))
                 }
@@ -347,19 +353,23 @@ private fun DeadlineRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .animateContentSize(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
             Text(text = stringResource(R.string.complete_before), style = AppTheme.typography.body)
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                modifier = Modifier.clickable {
-                    onEvent(EditViewModel.Event.SelectDeadlineDateClicked)
-                },
-                text = state.deadlineStringDate,
-                style = AppTheme.typography.subhead.copy(color = AppTheme.colors.colorBlue)
-            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            AnimatedVisibility(state.deadLineSwitchIsOn) {
+                Text(
+                    modifier = Modifier.clickable {
+                        onEvent(EditViewModel.Event.SelectDeadlineDateClicked)
+                    },
+                    text = state.deadlineStringDate,
+                    style = AppTheme.typography.subhead.copy(color = AppTheme.colors.colorBlue)
+                )
+            }
         }
         Spacer(modifier = Modifier.weight(1f))
         Switch(
@@ -398,26 +408,18 @@ private fun DeleteTextAndIcon(
 
 @Preview
 @Composable
-private fun EditScreenPreview() {
-    EditScreenContentWithTopAppBar(
-        state = EditViewModel.State(
-            deadlineDate = LocalDate.now(),
-            deadlineStringDate = "June 2, 2025",
-            deadLineSwitchIsOn = true,
-            description = "",
-            priority = Priority.Default,
-        ), onEvent = {}
-    )
-}
-
-private fun Modifier.bottomElevation(): Modifier = this.then(Modifier.drawWithContent {
-    val paddingPx = 8.dp.toPx()
-    clipRect(
-        left = 0f,
-        top = 0f,
-        right = size.width,
-        bottom = size.height + paddingPx
-    ) {
-        this@drawWithContent.drawContent()
+private fun EditScreenPreview(
+    @PreviewParameter(PreviewConfigProvider::class) config: PreviewConfig,
+) {
+    AppTheme(isDarkTheme = config.isDarkTheme) {
+        EditScreenContentWithTopAppBar(
+            state = EditViewModel.State(
+                deadlineDate = LocalDate.now(),
+                deadlineStringDate = "June 2, 2025",
+                deadLineSwitchIsOn = true,
+                description = "",
+                priority = Priority.Default,
+            ), onEvent = {}
+        )
     }
-})
+}

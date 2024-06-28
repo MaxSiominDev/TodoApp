@@ -22,7 +22,7 @@ internal object DatabaseModule {
             context,
             TodoDatabase::class.java,
             TodoDatabase.DATABASE_NAME,
-        ).build()
+        ).addMigrations(*TodoDatabase.migrations).build()
     }
 
     @Singleton

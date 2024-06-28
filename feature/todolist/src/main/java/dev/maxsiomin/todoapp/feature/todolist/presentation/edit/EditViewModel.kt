@@ -7,13 +7,12 @@ import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.common.domain.resource.errorOrNull
 import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.safeArg
+import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
-import dev.maxsiomin.todoapp.core.util.DateFormatter
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.UuidGenerator
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
-import dev.maxsiomin.todoapp.feature.todolist.domain.model.Progress
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
@@ -34,7 +33,6 @@ internal class EditViewModel @Inject constructor(
     private val getTodoItemByIdUseCase: GetTodoItemByIdUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val validateDescriptionUseCase: ValidateDescriptionUseCase,
-    private val dateFormatter: DateFormatter,
     private val uuidGenerator: UuidGenerator,
     savedStateHandle: SavedStateHandle,
 ) : StatefulViewModel<EditViewModel.State, EditViewModel.Effect, EditViewModel.Event>() {
@@ -63,7 +61,7 @@ internal class EditViewModel @Inject constructor(
             State(
                 description = "",
                 deadlineDate = date,
-                deadlineStringDate = dateFormatter.formatDate(date),
+                deadlineStringDate = date.toLocalizedDate(),
                 deadLineSwitchIsOn = false,
                 priority = Priority.Default,
             )
@@ -85,7 +83,7 @@ internal class EditViewModel @Inject constructor(
         todoItem = item
         _state.update {
             val deadlineDate = item.deadline ?: getDefaultDeadlineDate()
-            val deadlineStringDate = dateFormatter.formatDate(deadlineDate)
+            val deadlineStringDate = deadlineDate.toLocalizedDate()
             State(
                 description = item.description,
                 priority = item.priority,
@@ -99,6 +97,7 @@ internal class EditViewModel @Inject constructor(
     sealed class Effect {
         data object GoBack : Effect()
         data class ShowMessage(val message: UiText) : Effect()
+        data class ShowToast(val message: UiText) : Effect()
     }
 
     sealed class Event {
@@ -184,32 +183,27 @@ internal class EditViewModel @Inject constructor(
     private suspend fun saveEditedTodoItem(todoItem: TodoItem, state: State) {
         val deadline: LocalDate? = if (state.deadLineSwitchIsOn) state.deadlineDate else null
         val modified: LocalDate = LocalDate.now()
-        val priority = state.priority
-        val description = state.description
         val newItem = todoItem.copy(
-            description = description,
+            description = state.description,
             deadline = deadline,
             modified = modified,
-            priority = priority,
+            priority = state.priority,
         )
         addTodoItemUseCase(newItem)
     }
 
     private suspend fun saveNewTodoItem(state: State) {
         val deadline: LocalDate? = if (state.deadLineSwitchIsOn) state.deadlineDate else null
-        val modified = null
-        val priority = state.priority
-        val description = state.description
         val uuid = uuidGenerator.generateUuid()
         val created = LocalDate.now()
         val newItem = TodoItem(
             id = uuid,
-            description = description,
-            priority = priority,
+            description = state.description,
+            priority = state.priority,
             created = created,
             deadline = deadline,
-            progress = Progress.NotCompleted,
-            modified = modified,
+            isCompleted = false,
+            modified = null,
         )
         addTodoItemUseCase(newItem)
     }
@@ -226,12 +220,19 @@ internal class EditViewModel @Inject constructor(
         }
     }
 
-    private fun onNewDate(newDate: LocalDate) = _state.update {
-        it.copy(
-            deadlineDate = newDate,
-            deadlineStringDate = dateFormatter.formatDate(newDate),
-            showSelectDeadlineDateDialog = false,
-        )
+    private fun onNewDate(newDate: LocalDate) {
+        val isBeforeToday = newDate < LocalDate.now()
+        if (isBeforeToday) {
+            onEffect(Effect.ShowToast(UiText.StringResource(R.string.invalid_deadline_date)))
+            return
+        }
+        _state.update {
+            it.copy(
+                deadlineDate = newDate,
+                deadlineStringDate = newDate.toLocalizedDate(),
+                showSelectDeadlineDateDialog = false,
+            )
+        }
     }
 
     private fun getDefaultDeadlineDate(): LocalDate {

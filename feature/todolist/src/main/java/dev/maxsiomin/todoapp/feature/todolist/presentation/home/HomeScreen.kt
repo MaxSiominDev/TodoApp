@@ -37,14 +37,21 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import dev.maxsiomin.common.extensions.now
+import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
+import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfig
+import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfigProvider
 import dev.maxsiomin.todoapp.feature.todolist.R
+import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.navdestinations.Screen
+import kotlinx.datetime.LocalDate
 
 @Composable
 internal fun HomeScreen(navController: NavHostController) {
@@ -137,45 +144,40 @@ private fun TopBar(
 }
 
 @Composable
-private fun HomeScreenMainContent(
+private fun BoxScope.HomeScreenMainContent(
     state: HomeViewModel.State,
     listState: LazyListState,
     onEvent: (HomeViewModel.Event) -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AppTheme.colors.backPrimary)
-    ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .padding(16.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(AppTheme.colors.backSecondary)
-        ) {
-            items(
-                items = state.todoItems,
-                key = {
-                    it.id
-                },
-            ) {
-                TodoItemComposable(
-                    todoItem = it,
-                    onEvent = onEvent,
-                    modifier = Modifier.background(AppTheme.colors.backSecondary),
-                )
-            }
 
-            if (state.todoItems.isNotEmpty()) {
-                item {
-                    ButtonNew(onEvent, Modifier.padding(start = 36.dp, bottom = 8.dp),)
-                }
-            }
+    LazyColumn(
+        state = listState,
+        modifier = Modifier
+            .padding(16.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(AppTheme.colors.backSecondary)
+    ) {
+        items(
+            items = state.todoItems,
+            key = {
+                it.id
+            },
+        ) {
+            TodoItemComposable(
+                todoItem = it,
+                onEvent = onEvent,
+                modifier = Modifier.background(AppTheme.colors.backSecondary),
+            )
         }
 
-        FabAdd(onEvent, Modifier.padding(end = 24.dp, bottom = 36.dp))
+        if (state.todoItems.isNotEmpty()) {
+            item {
+                ButtonNew(onEvent, Modifier.padding(start = 36.dp, bottom = 8.dp),)
+            }
+        }
     }
+
+    FabAdd(onEvent, Modifier.padding(end = 24.dp, bottom = 36.dp).align(Alignment.BottomEnd))
 
 }
 
@@ -216,10 +218,9 @@ private fun IconHideCompleted(
 }
 
 @Composable
-private fun BoxScope.FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier = Modifier) {
+private fun FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier = Modifier) {
     FloatingActionButton(
-        modifier = modifier
-            .align(Alignment.BottomEnd),
+        modifier = modifier,
         onClick = {
             onEvent(HomeViewModel.Event.AddClicked)
         },
@@ -233,7 +234,19 @@ private fun BoxScope.FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Mo
 
 @Preview
 @Composable
-private fun HomeScreenPreview() {
-    val items = emptyList<TodoItemUiModel>()
-    HomeScreenContentWithTopAppBar(state = HomeViewModel.State(items, "5"), onEvent = {})
+private fun HomeScreenPreview(
+    @PreviewParameter(PreviewConfigProvider::class) config: PreviewConfig,
+) {
+    val items = mutableListOf(
+        TodoItemUiModel(
+            id = "",
+            description = "My todo item",
+            priority = Priority.High,
+            isCompleted = true,
+            deadline = LocalDate.now().toLocalizedDate(),
+        )
+    )
+    AppTheme(isDarkTheme = config.isDarkTheme) {
+        HomeScreenContentWithTopAppBar(state = HomeViewModel.State(items, "5"), onEvent = {})
+    }
 }
