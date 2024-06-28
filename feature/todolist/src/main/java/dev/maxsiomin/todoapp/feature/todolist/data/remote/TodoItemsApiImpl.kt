@@ -49,7 +49,7 @@ class TodoItemsApiImpl @Inject constructor(
     }
 
     companion object {
-        private const val DEBUG_FAILS_THRESHOLD = 70
+        private const val DEBUG_FAILS_THRESHOLD = 0
         private const val RELEASE_FAILS_THRESHOLD = 0
         private val FAILS_THRESHOLD =
             (if (isDebug()) DEBUG_FAILS_THRESHOLD else RELEASE_FAILS_THRESHOLD).toString()

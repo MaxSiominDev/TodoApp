@@ -38,11 +38,6 @@ internal class HomeViewModel @Inject constructor(
 
     init {
         refreshItems()
-
-        viewModelScope.launch {
-            val result = todoItemsApi.getTodoItemsList()
-            result
-        }
     }
 
     private fun refreshItems() {

@@ -3,7 +3,9 @@ package dev.maxsiomin.todoapp.core.presentation.theme
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -21,9 +23,11 @@ object AppTheme {
     ) {
         val colorScheme = if (isDarkTheme) darkColors else lightColors
         val typography = appTypography(colorScheme)
+        val rippleIndication = rememberRipple()
         CompositionLocalProvider(
             LocalAppColorScheme provides colorScheme,
             LocalAppTypography provides typography,
+            LocalIndication provides rippleIndication,
         ) {
             content()
         }
