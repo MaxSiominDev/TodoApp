@@ -5,15 +5,17 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dev.maxsiomin.todoapp.feature.todolist.data.local.converters.LocalDateConverters
 import dev.maxsiomin.todoapp.feature.todolist.data.local.converters.PriorityConverters
-import dev.maxsiomin.todoapp.feature.todolist.data.local.converters.ProgressConverters
+import dev.maxsiomin.todoapp.feature.todolist.data.local.migrations.MIGRATION_1_2
 
-@Database(entities = [TodoItemEntity::class], version = 1)
-@TypeConverters(value = [ProgressConverters::class, PriorityConverters::class, LocalDateConverters::class])
+@Database(entities = [TodoItemEntity::class], version = 2)
+@TypeConverters(value = [PriorityConverters::class, LocalDateConverters::class])
 internal abstract class TodoDatabase : RoomDatabase() {
 
     abstract val dao: TodoDao
 
     companion object {
         const val DATABASE_NAME = "todo_db"
+
+        val migrations = arrayOf(MIGRATION_1_2)
     }
 }

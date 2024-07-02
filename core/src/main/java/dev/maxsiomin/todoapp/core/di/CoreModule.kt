@@ -1,36 +1,37 @@
 package dev.maxsiomin.todoapp.core.di
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.maxsiomin.todoapp.core.util.DateFormatter
-import dev.maxsiomin.todoapp.core.util.DefaultDateFormatter
-import dev.maxsiomin.todoapp.core.util.LocaleLanguage
-import dev.maxsiomin.todoapp.core.util.LocaleManager
-import dev.maxsiomin.todoapp.core.util.LocaleManagerImpl
-import dev.maxsiomin.todoapp.core.util.RussianDateFormatter
+import dev.maxsiomin.todoapp.core.util.DispatcherProvider
+import dev.maxsiomin.todoapp.core.util.StandardDispatchers
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object CoreModule {
 
-    @Provides
     @Singleton
-    fun provideDateFormatter(
-        localeManager: LocaleManager,
-        @ApplicationContext context: Context,
-    ): DateFormatter {
-        return when (localeManager.getLocaleLanguage()) {
-            LocaleLanguage.Default -> DefaultDateFormatter(context)
-            LocaleLanguage.Ru -> RussianDateFormatter(context)
+    @Provides
+    fun provideHttpClient(): HttpClient {
+        return HttpClient(Android) {
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                })
+            }
         }
     }
 
     @Provides
-    fun provideLocaleManager(impl: LocaleManagerImpl): LocaleManager = impl
+    fun provideDispatcherProvider(): DispatcherProvider {
+        return StandardDispatchers
+    }
 
 }
