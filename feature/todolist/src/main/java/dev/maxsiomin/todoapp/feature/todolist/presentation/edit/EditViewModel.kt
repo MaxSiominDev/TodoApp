@@ -17,6 +17,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.EditTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetTodoItemByIdUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.ValidateDescriptionUseCase
 import dev.maxsiomin.todoapp.navdestinations.Screen
@@ -31,6 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class EditViewModel @Inject constructor(
     private val addTodoItemUseCase: AddTodoItemUseCase,
+    private val editTodoItemUseCase: EditTodoItemUseCase,
     private val getTodoItemByIdUseCase: GetTodoItemByIdUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val validateDescriptionUseCase: ValidateDescriptionUseCase,
@@ -191,7 +193,7 @@ internal class EditViewModel @Inject constructor(
             modified = modified,
             priority = state.priority,
         )
-        addTodoItemUseCase(newItem)
+        editTodoItemUseCase(newItem)
     }
 
     private suspend fun saveNewTodoItem(state: State) {

@@ -57,21 +57,26 @@ internal class TodoItemMapper @Inject constructor() {
     }
 
     fun fromDomainToDto(domain: TodoItem): TodoItemDto {
-        val importance = when (domain.priority) {
+        val entity = this.fromDomainToEntity(domain)
+        return this.fromEntityToDto(entity)
+    }
+
+    fun fromEntityToDto(entity: TodoItemEntity): TodoItemDto {
+        val importance = when (entity.priority) {
             Priority.Default -> "basic"
             Priority.High -> "high"
             Priority.Low -> "low"
         }
         return TodoItemDto(
-            id = domain.id,
-            description = domain.description,
+            id = entity.id,
+            description = entity.description,
             importance = importance,
-            deadline = domain.deadline?.toEpochMillis(),
-            isCompleted = domain.isCompleted,
+            deadline = entity.deadline?.toEpochMillis(),
+            isCompleted = entity.isCompleted,
             color = null,
-            createdAt = domain.created.toEpochMillis(),
-            changedAt = domain.modified.toEpochMillis(),
-            lastUpdatedBy = domain.lastUpdatedBy,
+            createdAt = entity.created.toEpochMillis(),
+            changedAt = entity.modified.toEpochMillis(),
+            lastUpdatedBy = entity.lastUpdatedBy,
         )
     }
 

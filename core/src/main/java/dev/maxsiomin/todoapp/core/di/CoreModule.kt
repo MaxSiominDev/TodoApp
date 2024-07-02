@@ -9,7 +9,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.maxsiomin.todoapp.core.data.ConnectivityObserver
 import dev.maxsiomin.todoapp.core.data.JvmUuidGenerator
+import dev.maxsiomin.todoapp.core.data.NetworkConnectivityObserver
 import dev.maxsiomin.todoapp.core.domain.UuidGenerator
 import dev.maxsiomin.todoapp.core.util.AndroidDeviceIdManager
 import dev.maxsiomin.todoapp.core.util.ApiKeys
@@ -41,6 +43,9 @@ internal interface CoreModule {
     @Binds
     fun bindUuidGenerator(impl: JvmUuidGenerator): UuidGenerator
 
+    @Binds
+    fun bindConnectivityObserver(impl: NetworkConnectivityObserver): ConnectivityObserver
+
     companion object {
 
         @Singleton
@@ -58,7 +63,7 @@ internal interface CoreModule {
                     header(HttpHeaders.Accept, "application/json")
                 }
                 install(HttpRequestRetry) {
-                    retryOnServerErrors(maxRetries = 5)
+                    retryOnServerErrors(maxRetries = 2)
                     exponentialDelay()
                 }
             }

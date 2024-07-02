@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -184,6 +185,9 @@ private fun TopBarContent(
             }
         }
         Spacer(modifier = Modifier.weight(1f))
+        if (state.canRetry) {
+            IconRetry(onEvent = onEvent)
+        }
         IconHideCompleted(state, onEvent, Modifier.padding(end = 16.dp))
     }
 }
@@ -245,6 +249,20 @@ private fun ButtonNew(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier
 }
 
 @Composable
+private fun IconRetry(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier = Modifier) {
+    IconButton(
+        modifier = modifier,
+        onClick = { onEvent(HomeViewModel.Event.Retry) }
+    ) {
+        Icon(
+            tint = AppTheme.colors.colorBlue,
+            imageVector = Icons.Filled.Refresh,
+            contentDescription = stringResource(R.string.retry)
+        )
+    }
+}
+
+@Composable
 private fun IconHideCompleted(
     state: HomeViewModel.State,
     onEvent: (HomeViewModel.Event) -> Unit,
@@ -297,6 +315,9 @@ private fun HomeScreenPreview(
         )
     )
     AppTheme(isDarkTheme = config.isDarkTheme) {
-        HomeScreenContentWithTopAppBar(state = HomeViewModel.State(items, "5"), onEvent = {})
+        HomeScreenContentWithTopAppBar(
+            state = HomeViewModel.State(items, "5", canRetry = true),
+            onEvent = {}
+        )
     }
 }

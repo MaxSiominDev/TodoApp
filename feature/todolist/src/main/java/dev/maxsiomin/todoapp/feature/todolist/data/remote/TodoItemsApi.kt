@@ -16,7 +16,7 @@ interface TodoItemsApi {
 
     suspend fun updateTodoItemsList(
         newList: List<TodoItemDto>,
-        revision: Int
+        revision: Int,
     ): Resource<UpdateTodoItemsListResponse, NetworkError>
 
     suspend fun getTodoItemById(id: String): Resource<GetTodoItemByIdResponse, NetworkError>
@@ -26,8 +26,14 @@ interface TodoItemsApi {
         revision: Int
     ): Resource<AddTodoItemResponse, NetworkError>
 
-    suspend fun changeTodoItemById(itemDto: TodoItemDto): Resource<ChangeTodoItemByIdResponse, NetworkError>
+    suspend fun changeTodoItemById(
+        itemDto: TodoItemDto,
+        revision: Int
+    ): Resource<ChangeTodoItemByIdResponse, NetworkError>
 
-    suspend fun deleteTodoItem(id: String): Resource<DeleteTodoItemResponse, NetworkError>
+    suspend fun deleteTodoItem(
+        id: String,
+        revision: Int
+    ): Resource<DeleteTodoItemResponse, NetworkError>
 
 }

@@ -11,6 +11,7 @@ import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.EditTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetAllTodoItemsUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,7 @@ import javax.inject.Inject
 internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
-    private val addTodoItemUseCase: AddTodoItemUseCase,
+    private val editTodoItemUseCase: EditTodoItemUseCase,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
     private var todoItems = emptyList<TodoItem>()
@@ -33,17 +34,13 @@ internal class HomeViewModel @Inject constructor(
         val todoItems: List<TodoItemUiModel> = emptyList(),
         val completedCount: String = "",
         val hideCompleted: Boolean = false,
+        val canRetry: Boolean = false,
     )
 
     override val _state = MutableStateFlow(State())
 
 
     init {
-        refreshItems()
-        refreshItems()
-        refreshItems()
-        refreshItems()
-        refreshItems()
         refreshItems()
     }
 
@@ -64,6 +61,9 @@ internal class HomeViewModel @Inject constructor(
                 if (todoItems.isNotEmpty()) {
                     val offlineCopyMessage = UiText.StringResource(R.string.offline_copy)
                     onEffect(Effect.ShowMessage(offlineCopyMessage))
+                }
+                _state.update {
+                    it.copy(canRetry = true)
                 }
             }
 
@@ -105,6 +105,7 @@ internal class HomeViewModel @Inject constructor(
         data class OnCompleteViaDismission(val item: TodoItemUiModel) : Event()
         data object IconHideCompletedClicked : Event()
         data object Refresh : Event()
+        data object Retry : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -116,6 +117,12 @@ internal class HomeViewModel @Inject constructor(
             is Event.OnDeleteViaDismission -> onDeleteViaDismission(event.item)
             Event.IconHideCompletedClicked -> iconHideCompletedClicked()
             Event.Refresh -> refreshItems()
+            Event.Retry -> {
+                _state.update {
+                    it.copy(canRetry = false)
+                }
+                refreshItems()
+            }
         }
     }
 
@@ -125,7 +132,7 @@ internal class HomeViewModel @Inject constructor(
                 it.id == todoItem.id
             } ?: return@launch
             val editedItem = item.copy(isCompleted = isCompleted)
-            addTodoItemUseCase(editedItem)
+            editTodoItemUseCase(editedItem)
         }
     }
 
@@ -144,7 +151,7 @@ internal class HomeViewModel @Inject constructor(
                 it.id == todoItem.id
             } ?: return@launch
             val completedItem = item.copy(isCompleted = true)
-            addTodoItemUseCase(completedItem)
+            editTodoItemUseCase(completedItem)
         }
     }
 

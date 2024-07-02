@@ -9,7 +9,9 @@ internal interface TodoItemsRepository {
 
     fun getAllTodoItems(): Flow<Resource<List<TodoItem>, DataError>>
 
-    suspend fun addTodoItem(item: TodoItem): Resource<Unit, DataError>
+    suspend fun addTodoItem(item: TodoItem)
+
+    suspend fun editTodoItem(item: TodoItem)
 
     suspend fun getTodoItemById(id: String): Resource<TodoItem, DataError>
 
