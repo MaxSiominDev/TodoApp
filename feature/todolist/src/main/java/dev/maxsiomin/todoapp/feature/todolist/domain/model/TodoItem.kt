@@ -8,8 +8,9 @@ internal data class TodoItem(
     val priority: Priority,
     val isCompleted: Boolean,
     val created: LocalDate,
-    val modified: LocalDate? = null,
+    val modified: LocalDate,
     val deadline: LocalDate? = null,
+    val lastUpdatedBy: String,
 )
 
 internal sealed class Priority {

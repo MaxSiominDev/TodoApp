@@ -30,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -49,6 +50,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.toLocalizedDate
+import dev.maxsiomin.common.presentation.SnackbarCallback
+import dev.maxsiomin.common.presentation.SnackbarInfo
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfig
@@ -59,7 +62,7 @@ import dev.maxsiomin.todoapp.navdestinations.Screen
 import kotlinx.datetime.LocalDate
 
 @Composable
-internal fun HomeScreen(navController: NavHostController) {
+internal fun HomeScreen(navController: NavHostController, showSnackbar: SnackbarCallback) {
 
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -67,13 +70,17 @@ internal fun HomeScreen(navController: NavHostController) {
     CollectFlow(viewModel.effectFlow) { event ->
         when (event) {
             is HomeViewModel.Effect.GoToEditScreen -> navController.navigate(
-                Screen.EditScreen(
-                    itemId = event.itemId
-                )
+                Screen.EditScreen(itemId = event.itemId)
             )
 
-            is HomeViewModel.Effect.ShowMessage -> TODO()
+            is HomeViewModel.Effect.ShowMessage -> showSnackbar(
+                SnackbarInfo(message = event.message)
+            )
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(HomeViewModel.Event.Refresh)
     }
 
     HomeScreenContentWithTopAppBar(state, viewModel::onEvent)

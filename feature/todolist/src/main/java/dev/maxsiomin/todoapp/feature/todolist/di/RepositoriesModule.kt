@@ -10,10 +10,10 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsReposit
 
 @Module
 @InstallIn(ViewModelComponent::class)
-internal abstract class RepositoriesModule {
+internal interface RepositoriesModule {
 
     @Binds
     @ViewModelScoped
-    abstract fun bindTodoItemsRepository(impl: TodoItemsRepositoryImpl): TodoItemsRepository
+    fun bindTodoItemsRepository(impl: TodoItemsRepositoryImpl): TodoItemsRepository
 
 }

@@ -25,8 +25,12 @@ internal data class TodoItemEntity(
     val created: LocalDate,
 
     @ColumnInfo("modified")
-    val modified: LocalDate?,
+    val modified: LocalDate,
 
     @ColumnInfo("deadline")
     val deadline: LocalDate?,
+
+    @ColumnInfo("lastUpdatedBy")
+    val lastUpdatedBy: String,
+
 )

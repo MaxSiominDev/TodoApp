@@ -24,5 +24,6 @@
     <string name="new_">New</string>
     <string name="description_cannot_be_empty">Description cannot be empty</string>
     <string name="invalid_deadline_date">Deadline date cannot be before today</string>
+    <string name="offline_copy">You\'re viewing offline copy of your todo items</string>
 
 </resources>

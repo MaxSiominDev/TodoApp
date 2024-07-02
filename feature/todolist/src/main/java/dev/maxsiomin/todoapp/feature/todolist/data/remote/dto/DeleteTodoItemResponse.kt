@@ -1,3 +1,16 @@
 package dev.maxsiomin.todoapp.feature.todolist.data.remote.dto
 
-typealias DeleteTodoItemResponse = GetTodoItemByIdResponse
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class DeleteTodoItemResponse(
+    @SerialName("status")
+    val status: String,
+
+    @SerialName("element")
+    val item: TodoItemDto,
+
+    @SerialName("revision")
+    val revision: Int,
+)

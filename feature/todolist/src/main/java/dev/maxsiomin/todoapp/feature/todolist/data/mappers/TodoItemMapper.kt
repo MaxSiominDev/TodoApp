@@ -1,5 +1,6 @@
 package dev.maxsiomin.todoapp.feature.todolist.data.mappers
 
+import dev.maxsiomin.common.extensions.toEpochMillis
 import dev.maxsiomin.common.extensions.toLocalDate
 import dev.maxsiomin.todoapp.feature.todolist.data.local.TodoItemEntity
 import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.TodoItemDto
@@ -17,7 +18,8 @@ internal class TodoItemMapper @Inject constructor() {
             isCompleted = entity.isCompleted,
             created = entity.created,
             modified = entity.modified,
-            deadline = entity.deadline
+            deadline = entity.deadline,
+            lastUpdatedBy = entity.lastUpdatedBy,
         )
     }
 
@@ -30,6 +32,7 @@ internal class TodoItemMapper @Inject constructor() {
             created = domain.created,
             modified = domain.modified,
             deadline = domain.deadline,
+            lastUpdatedBy = domain.lastUpdatedBy,
         )
     }
 
@@ -49,6 +52,26 @@ internal class TodoItemMapper @Inject constructor() {
             created = dto.createdAt.toLocalDate(),
             modified = dto.changedAt.toLocalDate(),
             deadline = dto.deadline?.toLocalDate(),
+            lastUpdatedBy = dto.lastUpdatedBy,
+        )
+    }
+
+    fun fromDomainToDto(domain: TodoItem): TodoItemDto {
+        val importance = when (domain.priority) {
+            Priority.Default -> "basic"
+            Priority.High -> "high"
+            Priority.Low -> "low"
+        }
+        return TodoItemDto(
+            id = domain.id,
+            description = domain.description,
+            importance = importance,
+            deadline = domain.deadline?.toEpochMillis(),
+            isCompleted = domain.isCompleted,
+            color = null,
+            createdAt = domain.created.toEpochMillis(),
+            changedAt = domain.modified.toEpochMillis(),
+            lastUpdatedBy = domain.lastUpdatedBy,
         )
     }
 

@@ -11,7 +11,8 @@ import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.todoapp.feature.todolist.R
-import dev.maxsiomin.todoapp.feature.todolist.domain.UuidGenerator
+import dev.maxsiomin.todoapp.core.domain.UuidGenerator
+import dev.maxsiomin.todoapp.core.util.DeviceIdManager
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
@@ -34,6 +35,7 @@ internal class EditViewModel @Inject constructor(
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val validateDescriptionUseCase: ValidateDescriptionUseCase,
     private val uuidGenerator: UuidGenerator,
+    private val deviceIdManager: DeviceIdManager,
     savedStateHandle: SavedStateHandle,
 ) : StatefulViewModel<EditViewModel.State, EditViewModel.Effect, EditViewModel.Event>() {
 
@@ -196,6 +198,7 @@ internal class EditViewModel @Inject constructor(
         val deadline: LocalDate? = if (state.deadLineSwitchIsOn) state.deadlineDate else null
         val uuid = uuidGenerator.generateUuid()
         val created = LocalDate.now()
+        val modified = created
         val newItem = TodoItem(
             id = uuid,
             description = state.description,
@@ -203,7 +206,8 @@ internal class EditViewModel @Inject constructor(
             created = created,
             deadline = deadline,
             isCompleted = false,
-            modified = null,
+            modified = modified,
+            lastUpdatedBy = deviceIdManager.getDeviceId(),
         )
         addTodoItemUseCase(newItem)
     }

@@ -5,10 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetTodoItemsListResponse(
+    @SerialName("status")
     val status: String,
 
     @SerialName("list")
     val items: List<TodoItemDto>,
 
+    @SerialName("revision")
     val revision: Int,
 )

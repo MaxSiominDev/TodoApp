@@ -28,7 +28,7 @@ internal object DatabaseModule {
     @Singleton
     @Provides
     fun provideTodoDao(db: TodoDatabase): TodoDao {
-        return db.dao
+        return db.todoDao
     }
 
 }

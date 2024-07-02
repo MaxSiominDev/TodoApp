@@ -2,9 +2,10 @@ package dev.maxsiomin.todoapp.feature.todolist.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
-import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -12,6 +13,12 @@ internal interface TodoDao {
 
     @Query(value = "SELECT * FROM todoitems")
     fun getAllTodoItems(): Flow<List<TodoItemEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(entities: List<TodoItemEntity>)
+
+    @Query(value = "DELETE FROM todoItems")
+    suspend fun clear()
 
     @Upsert
     suspend fun upsertTodoItem(item: TodoItemEntity)

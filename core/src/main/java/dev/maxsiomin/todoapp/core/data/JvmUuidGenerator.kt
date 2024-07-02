@@ -1,6 +1,6 @@
-package dev.maxsiomin.todoapp.feature.todolist.data
+package dev.maxsiomin.todoapp.core.data
 
-import dev.maxsiomin.todoapp.feature.todolist.domain.UuidGenerator
+import dev.maxsiomin.todoapp.core.domain.UuidGenerator
 import java.util.UUID
 import javax.inject.Inject
 

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UpdateTodoItemsListBody(
+data class UpdateTodoItemsListRequest(
     val status: String,
 
     @SerialName("list")

@@ -5,13 +5,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TodoItemDto(
+    @SerialName("id")
     val id: String,
 
     @SerialName("text")
     val description: String,
 
+    @SerialName("importance")
     val importance: String,
 
+    @SerialName("deadline")
     val deadline: Long? = null,
 
     @SerialName("done")

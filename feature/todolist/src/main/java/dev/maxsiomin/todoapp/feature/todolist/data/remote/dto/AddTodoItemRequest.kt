@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AddTodoItemResponse(
+data class AddTodoItemRequest(
     @SerialName("status")
     val status: String,
 
@@ -14,4 +14,3 @@ data class AddTodoItemResponse(
     @SerialName("revision")
     val revision: Int,
 )
-

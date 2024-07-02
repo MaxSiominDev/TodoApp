@@ -12,7 +12,7 @@ class TodoItemMapperTest {
     private val mapper = TodoItemMapper()
 
     @Test
-    fun `test toDomain mapping`() {
+    fun `test fromEntityToDomain mapping`() {
         // Given
         val entity = TodoItemEntity(
             id = "1",
@@ -25,7 +25,7 @@ class TodoItemMapperTest {
         )
 
         // When
-        val domain = mapper.toDomain(entity)
+        val domain = mapper.fromEntityToDomain(entity)
 
         // Then
         assertThat(domain.id).isEqualTo(entity.id)
@@ -38,7 +38,7 @@ class TodoItemMapperTest {
     }
 
     @Test
-    fun `test toData mapping`() {
+    fun `test fromDomainToEntity mapping`() {
         // Given
         val domain = TodoItem(
             id = "1",
@@ -51,7 +51,7 @@ class TodoItemMapperTest {
         )
 
         // When
-        val entity = mapper.toData(domain)
+        val entity = mapper.fromDomainToEntity(domain)
 
         // Then
         assertThat(entity.id).isEqualTo(domain.id)
