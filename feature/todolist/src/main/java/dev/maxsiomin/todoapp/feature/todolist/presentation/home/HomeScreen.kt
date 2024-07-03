@@ -185,9 +185,7 @@ private fun TopBarContent(
             }
         }
         Spacer(modifier = Modifier.weight(1f))
-        if (state.canRetry) {
-            IconRetry(onEvent = onEvent)
-        }
+        IconRetry(onEvent = onEvent)
         IconHideCompleted(state, onEvent, Modifier.padding(end = 16.dp))
     }
 }
@@ -252,7 +250,7 @@ private fun ButtonNew(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier
 private fun IconRetry(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier = Modifier) {
     IconButton(
         modifier = modifier,
-        onClick = { onEvent(HomeViewModel.Event.Retry) }
+        onClick = { onEvent(HomeViewModel.Event.Refresh) }
     ) {
         Icon(
             tint = AppTheme.colors.colorBlue,
@@ -316,7 +314,7 @@ private fun HomeScreenPreview(
     )
     AppTheme(isDarkTheme = config.isDarkTheme) {
         HomeScreenContentWithTopAppBar(
-            state = HomeViewModel.State(items, "5", canRetry = true),
+            state = HomeViewModel.State(items, "5"),
             onEvent = {}
         )
     }

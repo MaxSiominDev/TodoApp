@@ -9,10 +9,10 @@ import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.common.presentation.asUiText
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
-import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.EditTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetAllTodoItemsUseCase
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.ScheduleTodoItemsSyncUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,6 +24,7 @@ internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val editTodoItemUseCase: EditTodoItemUseCase,
+    private val scheduleTodoItemsSyncUseCase: ScheduleTodoItemsSyncUseCase,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
     private var todoItems = emptyList<TodoItem>()
@@ -34,7 +35,6 @@ internal class HomeViewModel @Inject constructor(
         val todoItems: List<TodoItemUiModel> = emptyList(),
         val completedCount: String = "",
         val hideCompleted: Boolean = false,
-        val canRetry: Boolean = false,
     )
 
     override val _state = MutableStateFlow(State())
@@ -42,6 +42,7 @@ internal class HomeViewModel @Inject constructor(
 
     init {
         refreshItems()
+        scheduleSync()
     }
 
     private fun refreshItems() {
@@ -61,9 +62,6 @@ internal class HomeViewModel @Inject constructor(
                 if (todoItems.isNotEmpty()) {
                     val offlineCopyMessage = UiText.StringResource(R.string.offline_copy)
                     onEffect(Effect.ShowMessage(offlineCopyMessage))
-                }
-                _state.update {
-                    it.copy(canRetry = true)
                 }
             }
 
@@ -90,6 +88,9 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun scheduleSync() {
+        scheduleTodoItemsSyncUseCase()
+    }
 
     sealed class Effect {
         data class GoToEditScreen(val itemId: String?) : Effect()
@@ -105,7 +106,6 @@ internal class HomeViewModel @Inject constructor(
         data class OnCompleteViaDismission(val item: TodoItemUiModel) : Event()
         data object IconHideCompletedClicked : Event()
         data object Refresh : Event()
-        data object Retry : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -117,12 +117,6 @@ internal class HomeViewModel @Inject constructor(
             is Event.OnDeleteViaDismission -> onDeleteViaDismission(event.item)
             Event.IconHideCompletedClicked -> iconHideCompletedClicked()
             Event.Refresh -> refreshItems()
-            Event.Retry -> {
-                _state.update {
-                    it.copy(canRetry = false)
-                }
-                refreshItems()
-            }
         }
     }
 
@@ -131,7 +125,10 @@ internal class HomeViewModel @Inject constructor(
             val item = todoItems.firstOrNull {
                 it.id == todoItem.id
             } ?: return@launch
-            val editedItem = item.copy(isCompleted = isCompleted)
+            val editedItem = item.copy(
+                isCompleted = isCompleted,
+                modified = System.currentTimeMillis(),
+            )
             editTodoItemUseCase(editedItem)
         }
     }
@@ -150,7 +147,10 @@ internal class HomeViewModel @Inject constructor(
             val item = todoItems.firstOrNull {
                 it.id == todoItem.id
             } ?: return@launch
-            val completedItem = item.copy(isCompleted = true)
+            val completedItem = item.copy(
+                isCompleted = true,
+                modified = System.currentTimeMillis(),
+            )
             editTodoItemUseCase(completedItem)
         }
     }

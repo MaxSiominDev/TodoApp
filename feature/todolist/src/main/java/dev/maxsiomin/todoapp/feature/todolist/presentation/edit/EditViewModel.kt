@@ -10,9 +10,9 @@ import dev.maxsiomin.common.extensions.safeArg
 import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
-import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.core.domain.UuidGenerator
 import dev.maxsiomin.todoapp.core.util.DeviceIdManager
+import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
@@ -109,7 +109,7 @@ internal class EditViewModel @Inject constructor(
         data class DeadlineSwitchChecked(val newValue: Boolean) : Event()
         data object DeleteIconClicked : Event()
         data object SaveClicked : Event()
-        data class NewDeadlineDateSelected(val newDate: LocalDate) : Event()
+        data class NewDeadlineDateSelected(val newDateTime: LocalDate) : Event()
         data object SelectDeadlineDateClicked : Event()
         data object SelectDeadlineDialogDismissed : Event()
         data object ExpandPriorityDropdown : Event()
@@ -132,7 +132,7 @@ internal class EditViewModel @Inject constructor(
 
             Event.SaveClicked -> onSave()
 
-            is Event.NewDeadlineDateSelected -> onNewDate(event.newDate)
+            is Event.NewDeadlineDateSelected -> onNewDate(event.newDateTime)
 
             Event.SelectDeadlineDateClicked -> _state.update {
                 it.copy(showSelectDeadlineDateDialog = true)
@@ -167,26 +167,30 @@ internal class EditViewModel @Inject constructor(
 
         when (validationResult.errorOrNull()) {
             ValidateDescriptionUseCase.DescriptionError.Empty -> {
-                onEffect(Effect.ShowMessage(
-                    UiText.StringResource(R.string.description_cannot_be_empty)
-                ))
+                onEffect(
+                    Effect.ShowMessage(
+                        UiText.StringResource(R.string.description_cannot_be_empty)
+                    )
+                )
                 isSavingOrDeleting = false
                 return
             }
+
             null -> Unit
         }
 
         viewModelScope.launch {
+            onEffect(Effect.GoBack)
             todoItem?.let { todoItem ->
                 saveEditedTodoItem(todoItem, state.value)
             } ?: saveNewTodoItem(state.value)
-            onEffect(Effect.GoBack)
         }
     }
 
     private suspend fun saveEditedTodoItem(todoItem: TodoItem, state: State) {
-        val deadline: LocalDate? = if (state.deadLineSwitchIsOn) state.deadlineDate else null
-        val modified: LocalDate = LocalDate.now()
+        val deadline: LocalDate? =
+            if (state.deadLineSwitchIsOn) state.deadlineDate else null
+        val modified = System.currentTimeMillis()
         val newItem = todoItem.copy(
             description = state.description,
             deadline = deadline,
@@ -197,9 +201,10 @@ internal class EditViewModel @Inject constructor(
     }
 
     private suspend fun saveNewTodoItem(state: State) {
-        val deadline: LocalDate? = if (state.deadLineSwitchIsOn) state.deadlineDate else null
+        val deadline: LocalDate? =
+            if (state.deadLineSwitchIsOn) state.deadlineDate else null
         val uuid = uuidGenerator.generateUuid()
-        val created = LocalDate.now()
+        val created = System.currentTimeMillis()
         val modified = created
         val newItem = TodoItem(
             id = uuid,
@@ -219,23 +224,23 @@ internal class EditViewModel @Inject constructor(
         isSavingOrDeleting = true
         viewModelScope.launch {
             // If is editing an item, then delete it, otherwise just go back
+            onEffect(Effect.GoBack)
             todoItem?.let {
                 deleteTodoItemUseCase(it)
             }
-            onEffect(Effect.GoBack)
         }
     }
 
-    private fun onNewDate(newDate: LocalDate) {
-        val isBeforeToday = newDate < LocalDate.now()
-        if (isBeforeToday) {
-            onEffect(Effect.ShowToast(UiText.StringResource(R.string.invalid_deadline_date)))
+    private fun onNewDate(newDateTime: LocalDate) {
+        val isBeforeNow = newDateTime < LocalDate.now()
+        if (isBeforeNow) {
+            onEffect(Effect.ShowToast(UiText.StringResource(R.string.invalid_deadline_time)))
             return
         }
         _state.update {
             it.copy(
-                deadlineDate = newDate,
-                deadlineStringDate = newDate.toLocalizedDate(),
+                deadlineDate = newDateTime,
+                deadlineStringDate = newDateTime.toLocalizedDate(),
                 showSelectDeadlineDateDialog = false,
             )
         }

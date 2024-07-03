@@ -22,4 +22,7 @@
     <string name="cancel">Отменить</string>
     <string name="new_">Создать</string>
     <string name="description_cannot_be_empty">Описание не может быть пустым</string>
+    <string name="invalid_deadline_date">Дата дедлайна не может быть раньше, чем сегодня</string>
+    <string name="offline_copy">Вы просматриваете оффлайн копию</string>
+    <string name="retry">Попробовать еще раз</string>
 </resources>

@@ -49,8 +49,8 @@ internal class TodoItemMapper @Inject constructor() {
             description = dto.description,
             priority = priority,
             isCompleted = dto.isCompleted,
-            created = dto.createdAt.toLocalDate(),
-            modified = dto.changedAt.toLocalDate(),
+            created = dto.createdAt,
+            modified = dto.changedAt,
             deadline = dto.deadline?.toLocalDate(),
             lastUpdatedBy = dto.lastUpdatedBy,
         )
@@ -59,6 +59,11 @@ internal class TodoItemMapper @Inject constructor() {
     fun fromDomainToDto(domain: TodoItem): TodoItemDto {
         val entity = this.fromDomainToEntity(domain)
         return this.fromEntityToDto(entity)
+    }
+
+    fun fromDtoToDomain(dto: TodoItemDto): TodoItem {
+        val entity = this.fromDtoToEntity(dto)
+        return this.fromEntityToDomain(entity)
     }
 
     fun fromEntityToDto(entity: TodoItemEntity): TodoItemDto {
@@ -74,8 +79,8 @@ internal class TodoItemMapper @Inject constructor() {
             deadline = entity.deadline?.toEpochMillis(),
             isCompleted = entity.isCompleted,
             color = null,
-            createdAt = entity.created.toEpochMillis(),
-            changedAt = entity.modified.toEpochMillis(),
+            createdAt = entity.created,
+            changedAt = entity.modified,
             lastUpdatedBy = entity.lastUpdatedBy,
         )
     }

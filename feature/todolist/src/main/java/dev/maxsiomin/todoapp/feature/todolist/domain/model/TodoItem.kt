@@ -7,8 +7,8 @@ internal data class TodoItem(
     val description: String,
     val priority: Priority,
     val isCompleted: Boolean,
-    val created: LocalDate,
-    val modified: LocalDate,
+    val created: Long,
+    val modified: Long,
     val deadline: LocalDate? = null,
     val lastUpdatedBy: String,
 )

@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -50,8 +49,7 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
             val initialData = dbFlow.first()
             emit(Resource.Success(initialData))
 
-            val dtoList = initialData.map { domain -> mapper.fromDomainToDto(domain) }
-            val apiResponse = tryMergeWithApi(dtoList)
+            val apiResponse = mergeWithApi()
             if (apiResponse is Resource.Error) {
                 emit(Resource.Error(apiResponse.error))
             }
@@ -68,23 +66,22 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
 
         db.todoDao.upsertTodoItem(item = mapper.fromDomainToEntity(item))
 
-        launch {
-            val revision = when (val revisionResponse = api.getTodoItemsList()) {
-                is Resource.Error -> return@launch
-                is Resource.Success -> revisionResponse.data.revision.also { revision = it }
-            }
-            val apiResponse = api.addTodoItem(
-                itemDto = mapper.fromDomainToDto(domain = item),
-                revision = revision
-            )
-            when (apiResponse) {
-                is Resource.Error -> Unit
-
-                is Resource.Success -> {
-                    this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
-                }
-            }
+        /**val revision = when (val revisionResponse = api.getTodoItemsList()) {
+            is Resource.Error -> return@withContext
+            is Resource.Success -> revisionResponse.data.revision.also { revision = it }
         }
+        val apiResponse = api.addTodoItem(
+            itemDto = mapper.fromDomainToDto(domain = item),
+            revision = revision
+        )
+        when (apiResponse) {
+            is Resource.Error -> Unit
+
+            is Resource.Success -> {
+                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
+            }
+        }*/
+        mergeWithApi()
 
         return@withContext
     }
@@ -95,24 +92,23 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
 
         db.todoDao.upsertTodoItem(item = mapper.fromDomainToEntity(item))
 
-        launch {
-            val revision = when (val revisionResponse = api.getTodoItemsList()) {
-                is Resource.Error -> return@launch
-                is Resource.Success -> revisionResponse.data.revision.also { revision = it }
-            }
-
-            val apiResponse = api.changeTodoItemById(
-                itemDto = mapper.fromDomainToDto(domain = item),
-                revision = revision,
-            )
-            when (apiResponse) {
-                is Resource.Error -> Unit
-
-                is Resource.Success -> {
-                    this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
-                }
-            }
+        /**val revision = when (val revisionResponse = api.getTodoItemsList()) {
+            is Resource.Error -> return@withContext
+            is Resource.Success -> revisionResponse.data.revision.also { revision = it }
         }
+
+        val apiResponse = api.changeTodoItemById(
+            itemDto = mapper.fromDomainToDto(domain = item),
+            revision = revision,
+        )
+        when (apiResponse) {
+            is Resource.Error -> Unit
+
+            is Resource.Success -> {
+                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
+            }
+        }*/
+        mergeWithApi()
 
         return@withContext
     }
@@ -137,34 +133,43 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
         val entity = mapper.fromDomainToEntity(item)
         db.todoDao.deleteTodoItem(entity)
 
-        launch {
-            val revision = when (val revisionResponse = api.getTodoItemsList()) {
-                is Resource.Error -> return@launch
-                is Resource.Success -> revisionResponse.data.revision.also { revision = it }
-            }
-
-            val apiResponse = api.deleteTodoItem(
-                id = item.id,
-                revision = revision,
-            )
-            when (apiResponse) {
-                is Resource.Error -> Unit
-
-                is Resource.Success -> {
-                    this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
-                }
-            }
+        /**val revision = when (val revisionResponse = api.getTodoItemsList()) {
+            is Resource.Error -> return@withContext
+            is Resource.Success -> revisionResponse.data.revision.also { revision = it }
         }
+
+        val apiResponse = api.deleteTodoItem(
+            id = item.id,
+            revision = revision,
+        )
+        when (apiResponse) {
+            is Resource.Error -> Unit
+
+            is Resource.Success -> {
+                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
+            }
+        }*/
+        mergeWithApi()
 
         return@withContext
     }
 
-    private suspend fun tryMergeWithApi(currList: List<TodoItemDto>): Resource<Unit, DataError> {
+    override suspend fun mergeWithApi(): Resource<Unit, DataError> {
+        val itemsFromApi = when (val fetchResource = fetchFromApi()) {
+            is Resource.Error -> return Resource.Error(fetchResource.error)
+            is Resource.Success -> fetchResource.data
+        }
+        val currList = db.todoDao.getAllTodoItems().first().map { mapper.fromEntityToDomain(it) }
+
+        val merged = mergedList(local = currList, remote = itemsFromApi).map { domain ->
+            mapper.fromDomainToDto(domain)
+        }
+
         val revision = when (val response = getRevision()) {
-            is Resource.Error ->  return Resource.Error(response.error)
+            is Resource.Error -> return Resource.Error(response.error)
             is Resource.Success -> response.data
         }
-        val response = api.updateTodoItemsList(newList = currList, revision = revision)
+        val response = api.updateTodoItemsList(newList = merged, revision = revision)
         return when (response) {
             is Resource.Error -> {
                 return Resource.Error(response.error)
@@ -178,6 +183,27 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
         }
     }
 
+    private fun mergedList(local: List<TodoItem>, remote: List<TodoItem>): List<TodoItem> {
+        val merged = mutableListOf<TodoItem>()
+
+        if (local.isEmpty() && remote.isEmpty()) {
+            return merged
+        }
+
+        val together = local + remote
+        for (item in together) {
+            val currId = item.id
+            if (currId in merged.map { it.id }) {
+                continue
+            }
+            val allWithCurrId = together.filter { it.id == currId }
+            val neededItem = allWithCurrId.maxBy { it.modified }
+            merged.add(neededItem)
+        }
+
+        return merged
+    }
+
     private suspend fun getRevision(): Resource<Int, DataError> {
         return when (val response = api.getTodoItemsList()) {
             is Resource.Error -> Resource.Error(response.error)
@@ -185,16 +211,15 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
         }
     }
 
-    /**private suspend fun fetchFromApi(): Resource<Unit, DataError> {
-    return when (val response = api.getTodoItemsList()) {
-    is Resource.Error -> Resource.Error(response.error)
-    is Resource.Success -> {
-    revision = response.data.revision
-    updateTodoItemsFromApi(response.data.items)
-    Resource.Success(Unit)
+    private suspend fun fetchFromApi(): Resource<List<TodoItem>, DataError> {
+        return when (val response = api.getTodoItemsList()) {
+            is Resource.Error -> Resource.Error(response.error)
+            is Resource.Success -> {
+                revision = response.data.revision
+                Resource.Success(response.data.items.map { mapper.fromDtoToDomain(it) })
+            }
+        }
     }
-    }
-    }*/
 
     private suspend fun updateTodoItemsFromApi(
         newItems: List<TodoItemDto>

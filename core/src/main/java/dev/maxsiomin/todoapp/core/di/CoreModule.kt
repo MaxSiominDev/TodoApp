@@ -58,7 +58,7 @@ internal interface CoreModule {
                     })
                 }
                 install(DefaultRequest) {
-                    header(HttpHeaders.Authorization, "Bearer ${ApiKeys.YANDEX_API_KEY}")
+                    header(HttpHeaders.Authorization, "OAuth y0_AgAAAAAtUHA-AARC0QAAAAEJO2NKAADJCN22BExPEZS4HKEYLc3cZVxeRw")
                     header(HttpHeaders.ContentType, "application/json")
                     header(HttpHeaders.Accept, "application/json")
                 }

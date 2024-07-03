@@ -22,10 +22,10 @@ internal data class TodoItemEntity(
     val isCompleted: Boolean,
 
     @ColumnInfo("created")
-    val created: LocalDate,
+    val created: Long,
 
     @ColumnInfo("modified")
-    val modified: LocalDate,
+    val modified: Long,
 
     @ColumnInfo("deadline")
     val deadline: LocalDate?,
