@@ -234,7 +234,7 @@ internal class EditViewModel @Inject constructor(
     private fun onNewDate(newDateTime: LocalDate) {
         val isBeforeNow = newDateTime < LocalDate.now()
         if (isBeforeNow) {
-            onEffect(Effect.ShowToast(UiText.StringResource(R.string.invalid_deadline_time)))
+            onEffect(Effect.ShowToast(UiText.StringResource(R.string.invalid_deadline_date)))
             return
         }
         _state.update {

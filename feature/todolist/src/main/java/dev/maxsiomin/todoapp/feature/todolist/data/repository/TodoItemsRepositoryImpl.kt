@@ -66,21 +66,6 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
 
         db.todoDao.upsertTodoItem(item = mapper.fromDomainToEntity(item))
 
-        /**val revision = when (val revisionResponse = api.getTodoItemsList()) {
-            is Resource.Error -> return@withContext
-            is Resource.Success -> revisionResponse.data.revision.also { revision = it }
-        }
-        val apiResponse = api.addTodoItem(
-            itemDto = mapper.fromDomainToDto(domain = item),
-            revision = revision
-        )
-        when (apiResponse) {
-            is Resource.Error -> Unit
-
-            is Resource.Success -> {
-                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
-            }
-        }*/
         mergeWithApi()
 
         return@withContext
@@ -92,22 +77,6 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
 
         db.todoDao.upsertTodoItem(item = mapper.fromDomainToEntity(item))
 
-        /**val revision = when (val revisionResponse = api.getTodoItemsList()) {
-            is Resource.Error -> return@withContext
-            is Resource.Success -> revisionResponse.data.revision.also { revision = it }
-        }
-
-        val apiResponse = api.changeTodoItemById(
-            itemDto = mapper.fromDomainToDto(domain = item),
-            revision = revision,
-        )
-        when (apiResponse) {
-            is Resource.Error -> Unit
-
-            is Resource.Success -> {
-                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
-            }
-        }*/
         mergeWithApi()
 
         return@withContext
@@ -133,22 +102,6 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
         val entity = mapper.fromDomainToEntity(item)
         db.todoDao.deleteTodoItem(entity)
 
-        /**val revision = when (val revisionResponse = api.getTodoItemsList()) {
-            is Resource.Error -> return@withContext
-            is Resource.Success -> revisionResponse.data.revision.also { revision = it }
-        }
-
-        val apiResponse = api.deleteTodoItem(
-            id = item.id,
-            revision = revision,
-        )
-        when (apiResponse) {
-            is Resource.Error -> Unit
-
-            is Resource.Success -> {
-                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
-            }
-        }*/
         mergeWithApi()
 
         return@withContext

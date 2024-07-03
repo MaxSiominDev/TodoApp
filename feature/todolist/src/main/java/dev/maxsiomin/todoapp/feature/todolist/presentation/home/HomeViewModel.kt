@@ -7,6 +7,8 @@ import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.common.presentation.asUiText
+import dev.maxsiomin.todoapp.core.data.ConnectivityObserver
+import dev.maxsiomin.todoapp.core.util.DispatcherProvider
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
@@ -25,6 +27,8 @@ internal class HomeViewModel @Inject constructor(
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val editTodoItemUseCase: EditTodoItemUseCase,
     private val scheduleTodoItemsSyncUseCase: ScheduleTodoItemsSyncUseCase,
+    private val connectivityObserver: ConnectivityObserver,
+    private val dispatchers: DispatcherProvider,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
     private var todoItems = emptyList<TodoItem>()
@@ -43,6 +47,12 @@ internal class HomeViewModel @Inject constructor(
     init {
         refreshItems()
         scheduleSync()
+
+        viewModelScope.launch(dispatchers.io) {
+            connectivityObserver.observe().collect { status ->
+                processConnectivityStatus(status)
+            }
+        }
     }
 
     private fun refreshItems() {
@@ -90,6 +100,19 @@ internal class HomeViewModel @Inject constructor(
 
     private fun scheduleSync() {
         scheduleTodoItemsSyncUseCase()
+    }
+
+    private fun processConnectivityStatus(status: ConnectivityObserver.Status) {
+        when (status) {
+            ConnectivityObserver.Status.Available -> {
+                if (connectivityObserver.wasPreviouslyOffline()) {
+                    refreshItems()
+                }
+            }
+            ConnectivityObserver.Status.Losing -> Unit
+            ConnectivityObserver.Status.Lost -> Unit
+            ConnectivityObserver.Status.Unavailable -> Unit
+        }
     }
 
     sealed class Effect {

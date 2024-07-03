@@ -4,15 +4,20 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 interface ConnectivityObserver {
 
     fun observe(): Flow<Status>
+
+    fun wasPreviouslyOffline(): Boolean
 
     sealed class Status {
         data object Available : Status()
@@ -22,9 +27,11 @@ interface ConnectivityObserver {
     }
 }
 
-class NetworkConnectivityObserver(
-    context: Context
+class AndroidConnectivityObserver @Inject constructor(
+    @ApplicationContext private val context: Context
 ): ConnectivityObserver {
+
+    private var wasPreviouslyOffline = false
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -45,11 +52,13 @@ class NetworkConnectivityObserver(
 
                 override fun onLost(network: Network) {
                     super.onLost(network)
+                    wasPreviouslyOffline = true
                     launch { send(ConnectivityObserver.Status.Lost) }
                 }
 
                 override fun onUnavailable() {
                     super.onUnavailable()
+                    wasPreviouslyOffline = true
                     launch { send(ConnectivityObserver.Status.Unavailable) }
                 }
             }
@@ -61,4 +70,9 @@ class NetworkConnectivityObserver(
             }
         }.distinctUntilChanged()
     }
+
+    override fun wasPreviouslyOffline(): Boolean {
+        return wasPreviouslyOffline
+    }
+
 }

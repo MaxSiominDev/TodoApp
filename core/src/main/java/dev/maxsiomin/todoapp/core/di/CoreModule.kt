@@ -11,10 +11,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.maxsiomin.todoapp.core.data.ConnectivityObserver
 import dev.maxsiomin.todoapp.core.data.JvmUuidGenerator
-import dev.maxsiomin.todoapp.core.data.NetworkConnectivityObserver
+import dev.maxsiomin.todoapp.core.data.AndroidConnectivityObserver
 import dev.maxsiomin.todoapp.core.domain.UuidGenerator
 import dev.maxsiomin.todoapp.core.util.AndroidDeviceIdManager
-import dev.maxsiomin.todoapp.core.util.ApiKeys
 import dev.maxsiomin.todoapp.core.util.DeviceIdManager
 import dev.maxsiomin.todoapp.core.util.DispatcherProvider
 import dev.maxsiomin.todoapp.core.util.StandardDispatchers
@@ -23,11 +22,9 @@ import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.HttpRequestPipeline
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.util.AttributeKey
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
@@ -44,7 +41,7 @@ internal interface CoreModule {
     fun bindUuidGenerator(impl: JvmUuidGenerator): UuidGenerator
 
     @Binds
-    fun bindConnectivityObserver(impl: NetworkConnectivityObserver): ConnectivityObserver
+    fun bindConnectivityObserver(impl: AndroidConnectivityObserver): ConnectivityObserver
 
     companion object {
 
