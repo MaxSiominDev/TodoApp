@@ -144,18 +144,15 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
 
     override suspend fun enqueueMergeWithApi(): Resource<Unit, DataError> {
         val deferred = CompletableDeferred<Resource<Unit, DataError>>()
-        val localList = db.todoDao.getAllTodoItems().first().map { mapper.fromEntityToDomain(it) }
         val request = MergeRequest(
-            callback = { mergeWithApi(localList) },
+            callback = { mergeWithApi() },
             deferred = deferred,
         )
         mergeWithApiChannel.send(request)
         return deferred.await()
     }
 
-    private suspend fun mergeWithApi(
-        localList: List<TodoItem>
-    ): Resource<Unit, DataError> = withContext(dispatchers.io) {
+    private suspend fun mergeWithApi(): Resource<Unit, DataError> = withContext(dispatchers.io) {
         val itemsFromApi = when (val fetchResource = fetchFromApi()) {
             is Resource.Error -> {
                 return@withContext Resource.Error(fetchResource.error)
@@ -163,8 +160,7 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
             is Resource.Success -> fetchResource.data
         }
 
-        delay(3000L)
-
+        val localList = db.todoDao.getAllTodoItems().first().map { mapper.fromEntityToDomain(it) }
         val merged = mergedList(local = localList, remote = itemsFromApi).map { domain ->
             mapper.fromDomainToDto(domain)
         }
