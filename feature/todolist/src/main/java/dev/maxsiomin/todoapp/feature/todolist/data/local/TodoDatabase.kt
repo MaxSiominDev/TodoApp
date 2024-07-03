@@ -7,7 +7,7 @@ import dev.maxsiomin.todoapp.feature.todolist.data.local.converters.LocalDateCon
 import dev.maxsiomin.todoapp.feature.todolist.data.local.converters.PriorityConverters
 import dev.maxsiomin.todoapp.feature.todolist.data.local.migrations.MIGRATION_1_2
 
-@Database(entities = [TodoItemEntity::class], version = 3)
+@Database(entities = [TodoItemEntity::class, DeletedItem::class], version = 4)
 @TypeConverters(value = [PriorityConverters::class, LocalDateConverters::class])
 internal abstract class TodoDatabase : RoomDatabase() {
 

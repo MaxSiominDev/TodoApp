@@ -29,4 +29,10 @@ internal interface TodoDao {
     @Delete
     suspend fun deleteTodoItem(item: TodoItemEntity)
 
+    @Query(value = "SELECT * FROM deletedItems")
+    suspend fun getDeletedItems(): List<DeletedItem>
+
+    @Upsert
+    suspend fun addDeletedItem(item: DeletedItem)
+
 }

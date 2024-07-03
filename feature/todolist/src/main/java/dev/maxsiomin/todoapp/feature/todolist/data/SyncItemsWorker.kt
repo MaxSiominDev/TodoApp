@@ -16,7 +16,7 @@ internal class SyncItemsWorker(
     lateinit var repo: TodoItemsRepository
 
     override suspend fun doWork(): Result {
-        val response = repo.mergeWithApi()
+        val response = repo.enqueueMergeWithApi()
         return when (response) {
             is Resource.Error -> Result.retry()
             is Resource.Success -> Result.success()
