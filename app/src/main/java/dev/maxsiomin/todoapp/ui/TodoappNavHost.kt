@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import dev.maxsiomin.common.presentation.SnackbarCallback
 import dev.maxsiomin.todoapp.TodoAppState
+import dev.maxsiomin.todoapp.feature.auth.presentation.addAuthNavigation
 import dev.maxsiomin.todoapp.feature.todolist.presentation.addTodolistNavigation
 import dev.maxsiomin.todoapp.navdestinations.Screen
 
@@ -11,7 +12,8 @@ import dev.maxsiomin.todoapp.navdestinations.Screen
 fun TodoappNavHost(appState: TodoAppState, showSnackbar: SnackbarCallback) {
 
     val navController = appState.navController
-    NavHost(navController = navController, startDestination = Screen.HomeScreen) {
+    NavHost(navController = navController, startDestination = Screen.AuthScreen) {
+        addAuthNavigation()
         addTodolistNavigation(navController = navController, showSnackbar = showSnackbar)
     }
 

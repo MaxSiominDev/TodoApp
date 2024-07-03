@@ -28,7 +28,7 @@ internal class HomeViewModel @Inject constructor(
     private val editTodoItemUseCase: EditTodoItemUseCase,
     private val scheduleTodoItemsSyncUseCase: ScheduleTodoItemsSyncUseCase,
     private val connectivityObserver: ConnectivityObserver,
-    private val dispatchers: DispatcherProvider,
+    dispatchers: DispatcherProvider,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
     private var todoItems = emptyList<TodoItem>()

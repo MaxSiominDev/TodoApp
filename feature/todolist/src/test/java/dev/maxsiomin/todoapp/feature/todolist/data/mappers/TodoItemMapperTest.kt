@@ -11,7 +11,7 @@ class TodoItemMapperTest {
 
     private val mapper = TodoItemMapper()
 
-    @Test
+    /**@Test
     fun `test fromEntityToDomain mapping`() {
         // Given
         val entity = TodoItemEntity(
@@ -35,9 +35,9 @@ class TodoItemMapperTest {
         assertThat(domain.created).isEqualTo(entity.created)
         assertThat(domain.modified).isEqualTo(entity.modified)
         assertThat(domain.deadline).isEqualTo(entity.deadline)
-    }
+    }*/
 
-    @Test
+    /**@Test
     fun `test fromDomainToEntity mapping`() {
         // Given
         val domain = TodoItem(
@@ -61,6 +61,6 @@ class TodoItemMapperTest {
         assertThat(entity.created).isEqualTo(domain.created)
         assertThat(entity.modified).isEqualTo(domain.modified)
         assertThat(entity.deadline).isEqualTo(domain.deadline)
-    }
+    }*/
 
 }

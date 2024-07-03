@@ -1,29 +1,19 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.daggerHilt)
     alias(libs.plugins.compose.compiler)
     kotlin("kapt")
 }
 
 android {
-    namespace = "dev.maxsiomin.todoapp"
+    namespace = "dev.maxsiomin.todoapp.feature.auth"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "dev.maxsiomin.todoapp"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-
-        manifestPlaceholders["YANDEX_CLIENT_ID"] = "0d0970774e284fa8ba9ff70b6b06479a"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -45,14 +35,6 @@ android {
     buildFeatures {
         compose = true
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
-    }
 }
 
 dependencies {
@@ -64,12 +46,16 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.ui.tooling)
     implementation(libs.androidx.material3)
     testImplementation(libs.junit)
+    testImplementation(libs.google.truth)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.google.truth)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -78,18 +64,32 @@ dependencies {
 
     implementation(libs.kotlinx.datetime)
 
+    implementation(project(":common"))
+    implementation(project(":core"))
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(project(":navdestinations"))
-
-    implementation(project(":common"))
-    implementation(project(":core"))
-    implementation(project(":feature:todolist"))
-    implementation(project(":feature:auth"))
 
     // Hilt for DI
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    // Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.serialization)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+
+    // Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Work Manager
+    implementation(libs.androidx.work.runtime.ktx)
+
+    implementation("com.yandex.android:authsdk:3.1.0")
 
 }
