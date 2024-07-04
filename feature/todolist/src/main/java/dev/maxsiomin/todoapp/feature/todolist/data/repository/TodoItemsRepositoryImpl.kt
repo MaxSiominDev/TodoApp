@@ -100,9 +100,17 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
 
         db.todoDao.upsertTodoItem(item = mapper.fromDomainToEntity(item))
 
-        enqueueMergeWithApi()
-
-        return@withContext
+        val revision = revision
+        val apiResponse = api.addTodoItem(
+            itemDto = mapper.fromDomainToDto(domain = item),
+            revision = revision
+        )
+        when (apiResponse) {
+            is Resource.Error -> Unit
+            is Resource.Success -> {
+                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
+            }
+        }
     }
 
     override suspend fun editTodoItem(
@@ -111,7 +119,17 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
 
         db.todoDao.upsertTodoItem(item = mapper.fromDomainToEntity(item))
 
-        enqueueMergeWithApi()
+        val revision = revision
+        val apiResponse = api.changeTodoItemById(
+            itemDto = mapper.fromDomainToDto(item),
+            revision = revision
+        )
+        when (apiResponse) {
+            is Resource.Error -> Unit
+            is Resource.Success -> {
+                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
+            }
+        }
 
         return@withContext
     }
@@ -137,7 +155,17 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
         db.todoDao.deleteTodoItem(entity)
         db.todoDao.addDeletedItem(DeletedItem(id = entity.id))
 
-        enqueueMergeWithApi()
+        val revision = revision
+        val apiResponse = api.deleteTodoItem(
+            id = item.id,
+            revision = revision
+        )
+        when (apiResponse) {
+            is Resource.Error -> Unit
+            is Resource.Success -> {
+                this@TodoItemsRepositoryImpl.revision = apiResponse.data.revision
+            }
+        }
 
         return@withContext
     }

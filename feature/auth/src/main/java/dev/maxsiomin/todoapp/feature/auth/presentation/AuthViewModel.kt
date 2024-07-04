@@ -13,6 +13,6 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(@ApplicationContext context: Context) : ViewModel() {
 
     val sdk = YandexAuthSdk.create(YandexAuthOptions(context))
-    val loginOptions = YandexAuthLoginOptions()
+    val loginOptions = YandexAuthLoginOptions().copy()
 
 }
