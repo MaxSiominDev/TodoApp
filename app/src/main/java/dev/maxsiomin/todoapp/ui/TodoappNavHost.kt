@@ -12,8 +12,12 @@ import dev.maxsiomin.todoapp.navdestinations.Screen
 fun TodoappNavHost(appState: TodoAppState, showSnackbar: SnackbarCallback) {
 
     val navController = appState.navController
-    NavHost(navController = navController, startDestination = Screen.HomeScreen) {
-        addAuthNavigation()
+
+    val startDestination: Any =
+        if (appState.isAuthenticated) Screen.HomeScreen else Screen.AuthScreen
+
+    NavHost(navController = navController, startDestination = startDestination) {
+        addAuthNavigation(navController = navController, showSnackbar = showSnackbar)
         addTodolistNavigation(navController = navController, showSnackbar = showSnackbar)
     }
 

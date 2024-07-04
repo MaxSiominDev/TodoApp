@@ -14,44 +14,44 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 
-object AppTheme {
-
-    @Composable
-    operator fun invoke(
-        isDarkTheme: Boolean = isSystemInDarkTheme(),
-        content: @Composable () -> Unit,
+@Composable
+fun AppTheme(
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit,
+) {
+    val colorScheme = if (isDarkTheme) darkColors else lightColors
+    val typography = appTypography(colorScheme)
+    val rippleIndication = rememberRipple()
+    CompositionLocalProvider(
+        LocalAppColorScheme provides colorScheme,
+        LocalAppTypography provides typography,
+        LocalIndication provides rippleIndication,
     ) {
-        val colorScheme = if (isDarkTheme) darkColors else lightColors
-        val typography = appTypography(colorScheme)
-        val rippleIndication = rememberRipple()
-        CompositionLocalProvider(
-            LocalAppColorScheme provides colorScheme,
-            LocalAppTypography provides typography,
-            LocalIndication provides rippleIndication,
-        ) {
-            content()
-        }
-
-        // Cast will fail on Preview
-        val context = LocalContext.current as? ComponentActivity ?: return
-        if (isDarkTheme) {
-            context.enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.dark(colorScheme.backPrimary.toArgb()),
-                navigationBarStyle = SystemBarStyle.dark(colorScheme.backPrimary.toArgb())
-            )
-        } else {
-            context.enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.light(
-                    colorScheme.backPrimary.toArgb(),
-                    colorScheme.colorGray.toArgb()
-                ),
-                navigationBarStyle = SystemBarStyle.light(
-                    colorScheme.backPrimary.toArgb(),
-                    colorScheme.colorGray.toArgb()
-                )
-            )
-        }
+        content()
     }
+
+    // Cast will fail on Preview
+    val context = LocalContext.current as? ComponentActivity ?: return
+    if (isDarkTheme) {
+        context.enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(colorScheme.backPrimary.toArgb()),
+            navigationBarStyle = SystemBarStyle.dark(colorScheme.backPrimary.toArgb())
+        )
+    } else {
+        context.enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(
+                colorScheme.backPrimary.toArgb(),
+                colorScheme.colorGray.toArgb()
+            ),
+            navigationBarStyle = SystemBarStyle.light(
+                colorScheme.backPrimary.toArgb(),
+                colorScheme.colorGray.toArgb()
+            )
+        )
+    }
+}
+
+object AppTheme {
 
     val colors: AppColorScheme
         @Composable get() {

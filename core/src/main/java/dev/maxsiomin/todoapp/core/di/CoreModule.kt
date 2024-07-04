@@ -12,7 +12,10 @@ import dagger.hilt.components.SingletonComponent
 import dev.maxsiomin.todoapp.core.data.ConnectivityObserver
 import dev.maxsiomin.todoapp.core.data.JvmUuidGenerator
 import dev.maxsiomin.todoapp.core.data.AndroidConnectivityObserver
+import dev.maxsiomin.todoapp.core.data.PrefsKeys
+import dev.maxsiomin.todoapp.core.data.repository.TokenRepositoryImpl
 import dev.maxsiomin.todoapp.core.domain.UuidGenerator
+import dev.maxsiomin.todoapp.core.domain.repository.TokenRepository
 import dev.maxsiomin.todoapp.core.util.AndroidDeviceIdManager
 import dev.maxsiomin.todoapp.core.util.DeviceIdManager
 import dev.maxsiomin.todoapp.core.util.DispatcherProvider
@@ -43,11 +46,16 @@ internal interface CoreModule {
     @Binds
     fun bindConnectivityObserver(impl: AndroidConnectivityObserver): ConnectivityObserver
 
+    @Singleton
+    @Binds
+    fun bindTokenRepository(impl: TokenRepositoryImpl): TokenRepository
+
     companion object {
 
         @Singleton
         @Provides
-        fun provideHttpClient(): HttpClient {
+        fun provideHttpClient(repository: TokenRepository): HttpClient {
+            val token: String? = repository.getToken()
             return HttpClient(Android) {
                 install(ContentNegotiation) {
                     json(Json {
@@ -55,7 +63,7 @@ internal interface CoreModule {
                     })
                 }
                 install(DefaultRequest) {
-                    header(HttpHeaders.Authorization, "OAuth y0_AgAAAAAtUHA-AARC0QAAAAEJO2NKAADJCN22BExPEZS4HKEYLc3cZVxeRw")
+                    header(HttpHeaders.Authorization, "OAuth $token")
                     header(HttpHeaders.ContentType, "application/json")
                     header(HttpHeaders.Accept, "application/json")
                 }

@@ -23,7 +23,11 @@ android {
             useSupportLibrary = true
         }
 
-        manifestPlaceholders["YANDEX_CLIENT_ID"] = "0d0970774e284fa8ba9ff70b6b06479a"
+        manifestPlaceholders["YANDEX_CLIENT_ID"] = "e35f47e544f74071b3bc299a5961bf4e"
+    }
+
+    signingConfigs {
+
     }
 
     buildTypes {
@@ -33,6 +37,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            signingConfig = signingConfigs.create("release").apply {
+                keyAlias = "todoapp"
+                keyPassword = "ZqyA4ErgoXCvVs0RtSujL94H49FmbqARIbGlzANOooHhk9rhf2"
+                storeFile = File("$projectDir/keys.jks")
+                storePassword = "ZqyA4ErgoXCvVs0RtSujL94H49FmbqARIbGlzANOooHhk9rhf2"
+            }
         }
     }
     compileOptions {

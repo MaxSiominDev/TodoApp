@@ -8,11 +8,13 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun rememberTodoAppState(
+    isAuthenticated: Boolean,
     navController: NavHostController = rememberNavController(),
 ): TodoAppState {
     return remember(navController) {
         TodoAppState(
             navController = navController,
+            isAuthenticated = isAuthenticated,
         )
     }
 }
@@ -20,4 +22,5 @@ fun rememberTodoAppState(
 @Stable
 class TodoAppState(
     val navController: NavHostController,
+    val isAuthenticated: Boolean,
 )
