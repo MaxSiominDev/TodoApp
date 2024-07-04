@@ -1,7 +1,5 @@
 package dev.maxsiomin.todoapp.feature.todolist.domain.usecase
 
-import dev.maxsiomin.common.domain.resource.DataError
-import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.todoapp.core.util.DispatcherProvider
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsRepository

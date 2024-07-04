@@ -2,9 +2,10 @@ package dev.maxsiomin.todoapp.feature.todolist.data.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.io.Serial
 
 @Serializable
-data class TodoItemDto(
+internal data class TodoItemDto(
     @SerialName("id")
     val id: String,
 
@@ -20,6 +21,7 @@ data class TodoItemDto(
     @SerialName("done")
     val isCompleted: Boolean,
 
+    @SerialName("color")
     val color: String? = null,
 
     @SerialName("created_at")

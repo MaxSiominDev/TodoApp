@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AddTodoItemRequest(
+internal data class AddTodoItemRequest(
     @SerialName("status")
     val status: String,
 

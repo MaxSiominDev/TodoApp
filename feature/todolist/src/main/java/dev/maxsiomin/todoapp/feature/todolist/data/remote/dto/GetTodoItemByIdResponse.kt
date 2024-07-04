@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetTodoItemByIdResponse(
+internal data class GetTodoItemByIdResponse(
     @SerialName("status")
     val status: String,
 

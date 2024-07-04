@@ -6,7 +6,7 @@ import dev.maxsiomin.todoapp.core.data.PrefsKeys
 import dev.maxsiomin.todoapp.core.domain.repository.TokenRepository
 import javax.inject.Inject
 
-class TokenRepositoryImpl @Inject constructor(
+internal class TokenRepositoryImpl @Inject constructor(
     private val prefs: SharedPreferences,
 ) : TokenRepository {
 

@@ -11,7 +11,7 @@ import dev.maxsiomin.todoapp.feature.todolist.data.SyncItemsWorker
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ScheduleTodoItemsSyncUseCase @Inject constructor(
+internal class ScheduleTodoItemsSyncUseCase @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 

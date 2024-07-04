@@ -6,7 +6,7 @@ import dev.maxsiomin.todoapp.core.domain.usecase.GetTokenUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+internal class MainViewModel @Inject constructor(
     private val getTokenUseCase: GetTokenUseCase,
 ) : ViewModel() {
 

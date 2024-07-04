@@ -9,7 +9,7 @@ import dev.maxsiomin.todoapp.feature.todolist.presentation.addTodolistNavigation
 import dev.maxsiomin.todoapp.navdestinations.Screen
 
 @Composable
-fun TodoappNavHost(appState: TodoAppState, showSnackbar: SnackbarCallback) {
+internal fun TodoappNavHost(appState: TodoAppState, showSnackbar: SnackbarCallback) {
 
     val navController = appState.navController
 

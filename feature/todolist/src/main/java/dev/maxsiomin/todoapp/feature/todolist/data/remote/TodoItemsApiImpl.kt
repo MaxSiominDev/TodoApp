@@ -24,7 +24,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import javax.inject.Inject
 
-class TodoItemsApiImpl @Inject constructor(
+internal class TodoItemsApiImpl @Inject constructor(
     private val httpClient: HttpClient,
 ) : TodoItemsApi {
 

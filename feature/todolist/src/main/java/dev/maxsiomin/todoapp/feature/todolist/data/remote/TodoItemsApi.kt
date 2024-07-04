@@ -10,7 +10,7 @@ import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.GetTodoItemsListRe
 import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.TodoItemDto
 import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.UpdateTodoItemsListResponse
 
-interface TodoItemsApi {
+internal interface TodoItemsApi {
 
     suspend fun getTodoItemsList(): Resource<GetTodoItemsListResponse, NetworkError>
 

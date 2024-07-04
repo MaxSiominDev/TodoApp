@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UpdateTodoItemsListResponse(
+internal data class UpdateTodoItemsListResponse(
     @SerialName("status")
     val status: String,
 
