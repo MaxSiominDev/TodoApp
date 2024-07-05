@@ -41,9 +41,7 @@ internal class TodoItemsRepositoryImpl @Inject constructor(
     private val mergeWithApiChannel =
         Channel<MergeRequest>().also { channel ->
             CoroutineScope(dispatchers.io).launch {
-                launch {
-                    processMergeRequests(channel)
-                }
+                processMergeRequests(channel)
             }
         }
 
