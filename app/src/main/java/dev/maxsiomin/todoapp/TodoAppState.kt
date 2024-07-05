@@ -19,6 +19,7 @@ fun rememberTodoAppState(
     }
 }
 
+/** Represents state of the application */
 @Stable
 class TodoAppState(
     val navController: NavHostController,

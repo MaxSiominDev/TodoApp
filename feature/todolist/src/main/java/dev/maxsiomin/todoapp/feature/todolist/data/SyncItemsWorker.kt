@@ -7,6 +7,7 @@ import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsRepository
 import javax.inject.Inject
 
+/** Schedules background syncs */
 internal class SyncItemsWorker(
     context: Context,
     workerParams: WorkerParameters

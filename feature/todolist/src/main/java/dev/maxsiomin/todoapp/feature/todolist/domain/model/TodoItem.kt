@@ -2,6 +2,7 @@ package dev.maxsiomin.todoapp.feature.todolist.domain.model
 
 import kotlinx.datetime.LocalDate
 
+/** Represents a todo item in the domain layer */
 internal data class TodoItem(
     val id: String,
     val description: String,

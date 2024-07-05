@@ -6,6 +6,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsReposit
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Deletes a todo item */
 internal class DeleteTodoItemUseCase @Inject constructor(
     private val repo: TodoItemsRepository,
     private val dispatchers: DispatcherProvider,

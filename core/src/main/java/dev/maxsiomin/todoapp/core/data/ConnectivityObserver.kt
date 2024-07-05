@@ -27,6 +27,7 @@ interface ConnectivityObserver {
     }
 }
 
+/** Default impl of [ConnectivityObserver] */
 internal class AndroidConnectivityObserver @Inject constructor(
     @ApplicationContext private val context: Context
 ): ConnectivityObserver {

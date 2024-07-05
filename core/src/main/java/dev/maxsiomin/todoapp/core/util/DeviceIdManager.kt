@@ -11,6 +11,7 @@ interface DeviceIdManager {
 
 }
 
+/** Gets device id on Android devices */
 internal class AndroidDeviceIdManager @Inject constructor(
     private val uuidGenerator: UuidGenerator,
     private val prefs: SharedPreferences,

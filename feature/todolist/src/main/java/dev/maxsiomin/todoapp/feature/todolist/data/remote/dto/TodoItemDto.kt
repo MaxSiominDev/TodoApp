@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.io.Serial
 
+/** Represents todo item when communicating to the API */
 @Serializable
 internal data class TodoItemDto(
     @SerialName("id")

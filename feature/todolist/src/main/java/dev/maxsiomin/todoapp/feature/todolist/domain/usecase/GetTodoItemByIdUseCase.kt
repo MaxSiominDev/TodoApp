@@ -8,6 +8,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsReposit
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Gets the todo item by id */
 internal class GetTodoItemByIdUseCase @Inject constructor(
     private val repo: TodoItemsRepository,
     private val dispatchers: DispatcherProvider,

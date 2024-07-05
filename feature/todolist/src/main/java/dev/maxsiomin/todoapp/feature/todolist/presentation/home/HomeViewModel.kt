@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/** ViewModel for HomeScreen */
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,

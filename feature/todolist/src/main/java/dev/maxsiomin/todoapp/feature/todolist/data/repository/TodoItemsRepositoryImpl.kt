@@ -25,11 +25,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Used to enqueue merges */
 internal data class MergeRequest(
     val callback: suspend () -> Resource<Unit, DataError>,
     val deferred: CompletableDeferred<Resource<Unit, DataError>>
 )
 
+/** Default impl for [TodoItemsRepository] */
 internal class TodoItemsRepositoryImpl @Inject constructor(
     private val db: TodoDatabase,
     private val api: TodoItemsApi,
