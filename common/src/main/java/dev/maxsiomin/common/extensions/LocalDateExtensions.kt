@@ -5,15 +5,12 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.format
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toLocalDateTime
-import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-
-fun LocalDate.Companion.now(timeZone: TimeZone = TimeZone.UTC) =
+fun LocalDate.Companion.now(timeZone: TimeZone = TimeZone.UTC): LocalDate =
     Clock.System.now().toLocalDateTime(timeZone).date
 
 fun LocalDate.toEpochMillis(timeZone: TimeZone = TimeZone.UTC): Long =

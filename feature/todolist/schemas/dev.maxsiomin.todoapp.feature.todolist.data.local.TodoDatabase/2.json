@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "85af1a42e6af88ea49bfd82aba9a55a8",
+    "identityHash": "7e29d9ad30cfddc5c76ceef8c9a7c77c",
     "entities": [
       {
         "tableName": "todoItems",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `description` TEXT NOT NULL, `priority` TEXT NOT NULL, `isCompleted` INTEGER NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER, `deadline` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `description` TEXT NOT NULL, `priority` TEXT NOT NULL, `isCompleted` INTEGER NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `deadline` INTEGER, `lastUpdatedBy` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -42,13 +42,19 @@
             "fieldPath": "modified",
             "columnName": "modified",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "deadline",
             "columnName": "deadline",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "lastUpdatedBy",
+            "columnName": "lastUpdatedBy",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -64,7 +70,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '85af1a42e6af88ea49bfd82aba9a55a8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7e29d9ad30cfddc5c76ceef8c9a7c77c')"
     ]
   }
 }

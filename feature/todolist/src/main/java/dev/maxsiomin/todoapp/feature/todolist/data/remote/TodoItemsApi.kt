@@ -8,19 +8,32 @@ import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.DeleteTodoItemResp
 import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.GetTodoItemByIdResponse
 import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.GetTodoItemsListResponse
 import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.TodoItemDto
+import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.UpdateTodoItemsListResponse
 
-interface TodoItemsApi {
+internal interface TodoItemsApi {
 
     suspend fun getTodoItemsList(): Resource<GetTodoItemsListResponse, NetworkError>
 
-    suspend fun updateTodoItemsList(newList: List<TodoItemDto>): Resource<GetTodoItemsListResponse, NetworkError>
+    suspend fun updateTodoItemsList(
+        newList: List<TodoItemDto>,
+        revision: Int,
+    ): Resource<UpdateTodoItemsListResponse, NetworkError>
 
     suspend fun getTodoItemById(id: String): Resource<GetTodoItemByIdResponse, NetworkError>
 
-    suspend fun addTodoItem(itemDto: TodoItemDto): Resource<AddTodoItemResponse, NetworkError>
+    suspend fun addTodoItem(
+        itemDto: TodoItemDto,
+        revision: Int
+    ): Resource<AddTodoItemResponse, NetworkError>
 
-    suspend fun changeTodoItemById(itemDto: TodoItemDto): Resource<ChangeTodoItemByIdResponse, NetworkError>
+    suspend fun changeTodoItemById(
+        itemDto: TodoItemDto,
+        revision: Int
+    ): Resource<ChangeTodoItemByIdResponse, NetworkError>
 
-    suspend fun deleteTodoItem(id: String): Resource<DeleteTodoItemResponse, NetworkError>
+    suspend fun deleteTodoItem(
+        id: String,
+        revision: Int
+    ): Resource<DeleteTodoItemResponse, NetworkError>
 
 }

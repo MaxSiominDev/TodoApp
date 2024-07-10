@@ -5,6 +5,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
+/** Represents app typography */
 data class AppTypography(
     val largeTitle: TextStyle,
     val title: TextStyle,

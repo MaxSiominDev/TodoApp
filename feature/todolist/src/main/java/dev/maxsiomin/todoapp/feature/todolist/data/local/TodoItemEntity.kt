@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import kotlinx.datetime.LocalDate
 
+/** Represents a todo item in the database*/
 @Entity(tableName = "todoItems")
 internal data class TodoItemEntity(
 
@@ -22,11 +23,15 @@ internal data class TodoItemEntity(
     val isCompleted: Boolean,
 
     @ColumnInfo("created")
-    val created: LocalDate,
+    val created: Long,
 
     @ColumnInfo("modified")
-    val modified: LocalDate?,
+    val modified: Long,
 
     @ColumnInfo("deadline")
     val deadline: LocalDate?,
+
+    @ColumnInfo("lastUpdatedBy")
+    val lastUpdatedBy: String,
+
 )

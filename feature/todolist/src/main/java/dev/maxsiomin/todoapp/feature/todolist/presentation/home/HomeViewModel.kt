@@ -2,30 +2,39 @@ package dev.maxsiomin.todoapp.feature.todolist.presentation.home
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.maxsiomin.common.domain.resource.DataError
 import dev.maxsiomin.common.domain.resource.Resource
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
+import dev.maxsiomin.common.presentation.asUiText
+import dev.maxsiomin.todoapp.core.data.ConnectivityObserver
+import dev.maxsiomin.todoapp.core.util.DispatcherProvider
 import dev.maxsiomin.todoapp.feature.todolist.R
-import dev.maxsiomin.todoapp.feature.todolist.data.remote.TodoItemsApi
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
-import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.EditTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetAllTodoItemsUseCase
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.ScheduleTodoItemsSyncUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/** ViewModel for HomeScreen */
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
-    private val addTodoItemUseCase: AddTodoItemUseCase,
-
-    private val todoItemsApi: TodoItemsApi,
+    private val editTodoItemUseCase: EditTodoItemUseCase,
+    private val scheduleTodoItemsSyncUseCase: ScheduleTodoItemsSyncUseCase,
+    private val connectivityObserver: ConnectivityObserver,
+    dispatchers: DispatcherProvider,
 ) : StatefulViewModel<HomeViewModel.State, HomeViewModel.Effect, HomeViewModel.Event>() {
 
-    private var items = emptyList<TodoItem>()
+    private var todoItems = emptyList<TodoItem>()
+
+    private var refreshItemsJob: Job? = null
 
     data class State(
         val todoItems: List<TodoItemUiModel> = emptyList(),
@@ -38,32 +47,47 @@ internal class HomeViewModel @Inject constructor(
 
     init {
         refreshItems()
+        scheduleSync()
+
+        viewModelScope.launch(dispatchers.io) {
+            connectivityObserver.observe().collect { status ->
+                processConnectivityStatus(status)
+            }
+        }
     }
 
     private fun refreshItems() {
-        viewModelScope.launch {
+        refreshItemsJob?.cancel()
+        refreshItemsJob = viewModelScope.launch {
             getAllTodoItemsUseCase().collect { resource ->
-                when (resource) {
-                    is Resource.Error -> onEffect(
-                        Effect.ShowMessage(
-                            UiText.StringResource(R.string.unknown_error)
-                        )
-                    )
+                processTodoItemResource(resource)
+            }
+        }
+    }
 
-                    is Resource.Success -> {
-                        val newItems = resource.data
-                        processTodoItems(newItems)
-                    }
+    private fun processTodoItemResource(resource: Resource<List<TodoItem>, DataError>) {
+        when (resource) {
+            is Resource.Error -> {
+                val message = resource.error.asUiText()
+                onEffect(Effect.ShowMessage(message))
+                if (todoItems.isNotEmpty()) {
+                    val offlineCopyMessage = UiText.StringResource(R.string.offline_copy)
+                    onEffect(Effect.ShowMessage(offlineCopyMessage))
                 }
+            }
+
+            is Resource.Success -> {
+                val newItems = resource.data
+                processTodoItems(newItems)
             }
         }
     }
 
     private fun processTodoItems(newItems: List<TodoItem>) {
-        items = newItems
+        todoItems = newItems
         val newIsCompletedCount = newItems.count { it.isCompleted }
         val filteredItemsByIsCompleted = if (state.value.hideCompleted) {
-            newItems.filter { it.isCompleted }
+            newItems.filter { !it.isCompleted }
         } else {
             newItems
         }
@@ -75,6 +99,22 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun scheduleSync() {
+        scheduleTodoItemsSyncUseCase()
+    }
+
+    private fun processConnectivityStatus(status: ConnectivityObserver.Status) {
+        when (status) {
+            ConnectivityObserver.Status.Available -> {
+                if (connectivityObserver.wasPreviouslyOffline()) {
+                    refreshItems()
+                }
+            }
+            ConnectivityObserver.Status.Losing -> Unit
+            ConnectivityObserver.Status.Lost -> Unit
+            ConnectivityObserver.Status.Unavailable -> Unit
+        }
+    }
 
     sealed class Effect {
         data class GoToEditScreen(val itemId: String?) : Effect()
@@ -89,6 +129,7 @@ internal class HomeViewModel @Inject constructor(
         data class OnDeleteViaDismission(val item: TodoItemUiModel) : Event()
         data class OnCompleteViaDismission(val item: TodoItemUiModel) : Event()
         data object IconHideCompletedClicked : Event()
+        data object Refresh : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -99,22 +140,26 @@ internal class HomeViewModel @Inject constructor(
             is Event.OnCompleteViaDismission -> onCompleteViaDismission(event.item)
             is Event.OnDeleteViaDismission -> onDeleteViaDismission(event.item)
             Event.IconHideCompletedClicked -> iconHideCompletedClicked()
+            Event.Refresh -> refreshItems()
         }
     }
 
     private fun changeProgress(isCompleted: Boolean, todoItem: TodoItemUiModel) {
         viewModelScope.launch {
-            val item = items.firstOrNull {
+            val item = todoItems.firstOrNull {
                 it.id == todoItem.id
             } ?: return@launch
-            val editedItem = item.copy(isCompleted = isCompleted)
-            addTodoItemUseCase(editedItem)
+            val editedItem = item.copy(
+                isCompleted = isCompleted,
+                modified = System.currentTimeMillis(),
+            )
+            editTodoItemUseCase(editedItem)
         }
     }
 
     private fun onDeleteViaDismission(todoItem: TodoItemUiModel) {
         viewModelScope.launch {
-            val item = items.firstOrNull {
+            val item = todoItems.firstOrNull {
                 it.id == todoItem.id
             } ?: return@launch
             deleteTodoItemUseCase(item)
@@ -123,11 +168,14 @@ internal class HomeViewModel @Inject constructor(
 
     private fun onCompleteViaDismission(todoItem: TodoItemUiModel) {
         viewModelScope.launch {
-            val item = items.firstOrNull {
+            val item = todoItems.firstOrNull {
                 it.id == todoItem.id
             } ?: return@launch
-            val completedItem = item.copy(isCompleted = true)
-            addTodoItemUseCase(completedItem)
+            val completedItem = item.copy(
+                isCompleted = true,
+                modified = System.currentTimeMillis(),
+            )
+            editTodoItemUseCase(completedItem)
         }
     }
 
@@ -135,7 +183,7 @@ internal class HomeViewModel @Inject constructor(
         _state.update {
             it.copy(hideCompleted = it.hideCompleted.not())
         }
-        processTodoItems(items)
+        processTodoItems(todoItems)
     }
 
 }

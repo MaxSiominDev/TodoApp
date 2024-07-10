@@ -6,12 +6,15 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsReposit
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Adds a todo item */
 internal class AddTodoItemUseCase @Inject constructor(
     private val repo: TodoItemsRepository,
     private val dispatchers: DispatcherProvider,
 ) {
 
-    suspend operator fun invoke(todoItem: TodoItem) = withContext(dispatchers.io) {
+    suspend operator fun invoke(
+        todoItem: TodoItem
+    ): Unit = withContext(dispatchers.io) {
         repo.addTodoItem(todoItem)
     }
 

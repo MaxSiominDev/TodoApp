@@ -3,12 +3,10 @@ package dev.maxsiomin.todoapp.feature.todolist.data.local.converters
 import androidx.room.TypeConverter
 import dev.maxsiomin.common.extensions.toEpochMillis
 import dev.maxsiomin.common.extensions.toLocalDate
-import kotlinx.datetime.Instant
+import dev.maxsiomin.todoapp.feature.todolist.data.local.TodoDatabase
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.toLocalDateTime
 
+/** [LocalDate] converters for [TodoDatabase] */
 internal class LocalDateConverters {
 
     @TypeConverter

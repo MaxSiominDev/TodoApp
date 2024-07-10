@@ -76,4 +76,6 @@ dependencies {
     // Kotlinx Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    implementation(libs.androidx.preference.ktx)
+
 }

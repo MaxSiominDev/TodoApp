@@ -9,7 +9,8 @@ sealed interface NetworkError : DataError {
     data object Redirected : NetworkError
     data object NotFound : NetworkError
     data object Server : NetworkError
-    data object Unknown : NetworkError
+    data object NoInternet : NetworkError
+    data class Unknown(val message: String?) : NetworkError
 
 }
 

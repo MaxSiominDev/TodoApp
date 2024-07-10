@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
+/** Every ViewModel used by composables should inherit from this class */
 abstract class StatefulViewModel<State : Any, Effect : Any, Event : Any> : ViewModel() {
 
     protected abstract val _state: MutableStateFlow<State>

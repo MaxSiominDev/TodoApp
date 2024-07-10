@@ -4,15 +4,42 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/build-logic" name="Todo App">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                  <project path="$PROJECT_DIR$/build-logic/app" />
+                  <project path="$PROJECT_DIR$/build-logic/common" />
+                  <project path="$PROJECT_DIR$/build-logic/core" />
+                  <project path="$PROJECT_DIR$/build-logic/feature" />
+                  <project path="$PROJECT_DIR$/build-logic/feature/auth" />
+                  <project path="$PROJECT_DIR$/build-logic/feature/todolist" />
+                  <project path="$PROJECT_DIR$/build-logic/navdestinations" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/build-logic/app" />
+            <option value="$PROJECT_DIR$/build-logic/common" />
+            <option value="$PROJECT_DIR$/build-logic/core" />
+            <option value="$PROJECT_DIR$/build-logic/feature" />
+            <option value="$PROJECT_DIR$/build-logic/feature/auth" />
+            <option value="$PROJECT_DIR$/build-logic/feature/todolist" />
+            <option value="$PROJECT_DIR$/build-logic/navdestinations" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/auth" />
             <option value="$PROJECT_DIR$/feature/todolist" />
             <option value="$PROJECT_DIR$/navdestinations" />
           </set>

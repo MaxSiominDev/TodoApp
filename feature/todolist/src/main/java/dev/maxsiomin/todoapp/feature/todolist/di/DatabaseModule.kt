@@ -22,13 +22,13 @@ internal object DatabaseModule {
             context,
             TodoDatabase::class.java,
             TodoDatabase.DATABASE_NAME,
-        ).addMigrations(*TodoDatabase.migrations).build()
+        ).addMigrations(*TodoDatabase.migrations).fallbackToDestructiveMigration().build()
     }
 
     @Singleton
     @Provides
     fun provideTodoDao(db: TodoDatabase): TodoDao {
-        return db.dao
+        return db.todoDao
     }
 
 }

@@ -9,10 +9,13 @@ import dev.maxsiomin.todoapp.feature.todolist.presentation.edit.EditScreen
 import dev.maxsiomin.todoapp.feature.todolist.presentation.home.HomeScreen
 import dev.maxsiomin.todoapp.navdestinations.Screen
 
-fun NavGraphBuilder.addTodolistNavigation(navController: NavHostController, showSnackbar: SnackbarCallback) {
+fun NavGraphBuilder.addTodolistNavigation(
+    navController: NavHostController,
+    showSnackbar: SnackbarCallback
+) {
 
     composable<Screen.HomeScreen> {
-        HomeScreen(navController = navController)
+        HomeScreen(navController = navController, showSnackbar = showSnackbar)
     }
 
     composable<Screen.EditScreen> {

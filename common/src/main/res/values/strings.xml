@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hide">Hide</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="bad_request">Bad request</string>
+    <string name="not_found">Error 404: Not found</string>
+    <string name="unauthorized">Unauthorized</string>
+    <string name="server_error">Server error</string>
+    <string name="no_internet">No internet connection</string>
 </resources>

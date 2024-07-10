@@ -5,7 +5,14 @@ plugins {
     alias(libs.plugins.daggerHilt)
     alias(libs.plugins.compose.compiler)
     kotlin("kapt")
+    id("telegram-reporter")
 }
+
+telegramReporter {
+    token.set(providers.environmentVariable("TG_TOKEN"))
+    chatId.set(providers.environmentVariable("TG_CHAT"))
+}
+
 
 android {
     namespace = "dev.maxsiomin.todoapp"
@@ -22,6 +29,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        manifestPlaceholders["YANDEX_CLIENT_ID"] = "e35f47e544f74071b3bc299a5961bf4e"
     }
 
     buildTypes {
@@ -31,6 +40,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            signingConfig = signingConfigs.create("release").apply {
+                keyAlias = "todoapp"
+                keyPassword = "ZqyA4ErgoXCvVs0RtSujL94H49FmbqARIbGlzANOooHhk9rhf2"
+                storeFile = File("$projectDir/keys.jks")
+                storePassword = "ZqyA4ErgoXCvVs0RtSujL94H49FmbqARIbGlzANOooHhk9rhf2"
+            }
         }
     }
     compileOptions {
@@ -83,6 +99,7 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":core"))
     implementation(project(":feature:todolist"))
+    implementation(project(":feature:auth"))
 
     // Hilt for DI
     implementation(libs.hilt.android)

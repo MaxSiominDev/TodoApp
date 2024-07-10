@@ -1,5 +1,6 @@
 package dev.maxsiomin.todoapp.feature.todolist.data.mappers
 
+import dev.maxsiomin.common.extensions.toEpochMillis
 import dev.maxsiomin.common.extensions.toLocalDate
 import dev.maxsiomin.todoapp.feature.todolist.data.local.TodoItemEntity
 import dev.maxsiomin.todoapp.feature.todolist.data.remote.dto.TodoItemDto
@@ -7,6 +8,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import javax.inject.Inject
 
+/** Maps various classes that represent todo items for different layers */
 internal class TodoItemMapper @Inject constructor() {
 
     fun fromEntityToDomain(entity: TodoItemEntity): TodoItem {
@@ -17,7 +19,8 @@ internal class TodoItemMapper @Inject constructor() {
             isCompleted = entity.isCompleted,
             created = entity.created,
             modified = entity.modified,
-            deadline = entity.deadline
+            deadline = entity.deadline,
+            lastUpdatedBy = entity.lastUpdatedBy,
         )
     }
 
@@ -30,6 +33,7 @@ internal class TodoItemMapper @Inject constructor() {
             created = domain.created,
             modified = domain.modified,
             deadline = domain.deadline,
+            lastUpdatedBy = domain.lastUpdatedBy,
         )
     }
 
@@ -46,9 +50,39 @@ internal class TodoItemMapper @Inject constructor() {
             description = dto.description,
             priority = priority,
             isCompleted = dto.isCompleted,
-            created = dto.createdAt.toLocalDate(),
-            modified = dto.changedAt.toLocalDate(),
+            created = dto.createdAt,
+            modified = dto.changedAt,
             deadline = dto.deadline?.toLocalDate(),
+            lastUpdatedBy = dto.lastUpdatedBy,
+        )
+    }
+
+    fun fromDomainToDto(domain: TodoItem): TodoItemDto {
+        val entity = this.fromDomainToEntity(domain)
+        return this.fromEntityToDto(entity)
+    }
+
+    fun fromDtoToDomain(dto: TodoItemDto): TodoItem {
+        val entity = this.fromDtoToEntity(dto)
+        return this.fromEntityToDomain(entity)
+    }
+
+    fun fromEntityToDto(entity: TodoItemEntity): TodoItemDto {
+        val importance = when (entity.priority) {
+            Priority.Default -> "basic"
+            Priority.High -> "high"
+            Priority.Low -> "low"
+        }
+        return TodoItemDto(
+            id = entity.id,
+            description = entity.description,
+            importance = importance,
+            deadline = entity.deadline?.toEpochMillis(),
+            isCompleted = entity.isCompleted,
+            color = null,
+            createdAt = entity.created,
+            changedAt = entity.modified,
+            lastUpdatedBy = entity.lastUpdatedBy,
         )
     }
 

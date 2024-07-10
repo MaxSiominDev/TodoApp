@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -25,3 +26,5 @@ include(":common")
 include(":feature:todolist")
 include(":navdestinations")
 include(":core")
+include(":feature:auth")
+gradle.startParameter.excludedTaskNames.addAll(listOf(":build-logic:testClasses"))
