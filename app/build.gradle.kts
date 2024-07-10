@@ -5,7 +5,14 @@ plugins {
     alias(libs.plugins.daggerHilt)
     alias(libs.plugins.compose.compiler)
     kotlin("kapt")
+    id("telegram-reporter")
 }
+
+telegramReporter {
+    token.set(providers.environmentVariable("TG_TOKEN"))
+    chatId.set(providers.environmentVariable("TG_CHAT"))
+}
+
 
 android {
     namespace = "dev.maxsiomin.todoapp"
@@ -24,10 +31,6 @@ android {
         }
 
         manifestPlaceholders["YANDEX_CLIENT_ID"] = "e35f47e544f74071b3bc299a5961bf4e"
-    }
-
-    signingConfigs {
-
     }
 
     buildTypes {
