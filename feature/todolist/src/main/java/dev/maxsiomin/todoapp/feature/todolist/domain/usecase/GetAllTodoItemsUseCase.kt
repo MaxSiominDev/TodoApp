@@ -7,6 +7,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.repository.TodoItemsReposit
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+/** Gets all todo items */
 internal class GetAllTodoItemsUseCase @Inject constructor(
     private val repo: TodoItemsRepository,
 ) {

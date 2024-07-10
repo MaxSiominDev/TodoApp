@@ -1,13 +1,8 @@
 package dev.maxsiomin.todoapp.feature.auth.presentation
 
-import android.content.Context
 import com.yandex.authsdk.YandexAuthLoginOptions
-import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthResult
-import com.yandex.authsdk.YandexAuthSdk
-import com.yandex.authsdk.YandexAuthSdkContract
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.maxsiomin.common.presentation.StatefulViewModel
 import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.todoapp.core.domain.usecase.SetTokenUseCase
@@ -15,6 +10,7 @@ import dev.maxsiomin.todoapp.feature.auth.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
+/** ViewModel for auth screen */
 @HiltViewModel
 internal class AuthViewModel @Inject constructor(
     private val setTokenUseCase: SetTokenUseCase,

@@ -3,6 +3,7 @@ package dev.maxsiomin.todoapp.core.domain.usecase
 import dev.maxsiomin.todoapp.core.domain.repository.TokenRepository
 import javax.inject.Inject
 
+/** Saves Yandex API token */
 class SetTokenUseCase @Inject constructor(
     private val repo: TokenRepository,
 ) {

@@ -2,6 +2,7 @@ package dev.maxsiomin.todoapp.core.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
+/** Represents app color scheme */
 data class AppColorScheme(
     val supportSeparator: Color,
     val supportOverlay: Color,

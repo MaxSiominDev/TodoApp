@@ -2,6 +2,7 @@ package dev.maxsiomin.todoapp.navdestinations
 
 import kotlinx.serialization.Serializable
 
+/** Containts all nav destionations in project */
 sealed class Screen {
 
     @Serializable

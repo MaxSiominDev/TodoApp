@@ -5,6 +5,7 @@ import dagger.hilt.android.HiltAndroidApp
 import dev.maxsiomin.common.util.isRelease
 import timber.log.Timber
 
+/** Application class */
 @HiltAndroidApp
 class App : Application() {
 

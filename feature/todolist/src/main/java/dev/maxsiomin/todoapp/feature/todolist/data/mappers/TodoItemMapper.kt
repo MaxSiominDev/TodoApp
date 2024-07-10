@@ -8,6 +8,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 import javax.inject.Inject
 
+/** Maps various classes that represent todo items for different layers */
 internal class TodoItemMapper @Inject constructor() {
 
     fun fromEntityToDomain(entity: TodoItemEntity): TodoItem {

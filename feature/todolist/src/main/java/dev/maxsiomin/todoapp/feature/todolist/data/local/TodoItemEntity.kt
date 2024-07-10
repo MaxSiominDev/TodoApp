@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import kotlinx.datetime.LocalDate
 
+/** Represents a todo item in the database*/
 @Entity(tableName = "todoItems")
 internal data class TodoItemEntity(
 

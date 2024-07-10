@@ -8,6 +8,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.ui.TodoApp
 
+/** Single activity  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 

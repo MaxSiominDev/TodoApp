@@ -3,6 +3,7 @@ package dev.maxsiomin.todoapp.feature.todolist.data.remote.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** DTO for add change todo item request */
 @Serializable
 internal data class ChangeTodoItemRequest(
     @SerialName("status")

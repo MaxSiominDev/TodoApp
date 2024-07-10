@@ -29,6 +29,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 import javax.inject.Inject
 
+/** ViewModel for EditScreen */
 @HiltViewModel
 internal class EditViewModel @Inject constructor(
     private val addTodoItemUseCase: AddTodoItemUseCase,

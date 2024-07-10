@@ -51,6 +51,7 @@ fun AppTheme(
     }
 }
 
+/** Object to access App Theme from all Composables */
 object AppTheme {
 
     val colors: AppColorScheme

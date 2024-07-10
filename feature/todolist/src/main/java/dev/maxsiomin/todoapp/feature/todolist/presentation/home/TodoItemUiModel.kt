@@ -4,6 +4,7 @@ import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
 
+/** Represents a todo item for UI */
 internal data class TodoItemUiModel(
     val id: String,
     val description: String,
