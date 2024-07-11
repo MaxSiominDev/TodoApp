@@ -32,7 +32,7 @@ class TelegramPlugin : Plugin<Project> {
             ).apply {
                 configure {
                     apkDir.set(artifacts)
-                    maxApkSize.set(20)
+                    maxApkSize.set(ext.maxApkSize)
                 }
             }
 
@@ -56,6 +56,6 @@ class TelegramPlugin : Plugin<Project> {
 interface TelegramExtension {
     val chatId: Property<String>
     val token: Property<String>
-
+    val maxApkSize: Property<Int>
 }
 

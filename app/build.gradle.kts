@@ -8,9 +8,11 @@ plugins {
     id("telegram-reporter")
 }
 
+val maxApkSizeValue = 20
 telegramReporter {
     token.set(providers.environmentVariable("TG_TOKEN"))
     chatId.set(providers.environmentVariable("TG_CHAT"))
+    maxApkSize.set(maxApkSizeValue)
 }
 
 
