@@ -1,4 +1,4 @@
-package dev.maxsiomin.todoapp
+package dev.maxsiomin.todoapp.plugins
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.MultiPartFormDataContent

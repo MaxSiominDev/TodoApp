@@ -5,7 +5,7 @@ plugins {
 gradlePlugin {
     plugins.register("telegram-reporter") {
         id = "telegram-reporter"
-        implementationClass = "dev.maxsiomin.todoapp.TelegramPlugin"
+        implementationClass = "dev.maxsiomin.todoapp.plugins.TelegramPlugin"
     }
 }
 
