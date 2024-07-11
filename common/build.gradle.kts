@@ -57,9 +57,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Hilt for DI
-    implementation(libs.hilt.android)
+    implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.kotlinx.datetime)
 

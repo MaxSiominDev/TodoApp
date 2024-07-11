@@ -15,11 +15,11 @@ import java.io.File
 
 class TgApi(private val httpClient: HttpClient) {
 
-    suspend fun sendFile(file: File, token: String, chatId: String): HttpResponse {
+    suspend fun sendFile(file: File, filename: String, token: String, chatId: String): HttpResponse {
         val body = MultiPartFormDataContent(
             formData {
                 append("document", file.readBytes(), Headers.build {
-                    append(HttpHeaders.ContentDisposition, "filename=${file.name.escapeIfNeeded()}")
+                    append(HttpHeaders.ContentDisposition, "filename=${filename.escapeIfNeeded()}")
                 })
             }
         )

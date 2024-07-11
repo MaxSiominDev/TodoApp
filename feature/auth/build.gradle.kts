@@ -66,12 +66,11 @@ dependencies {
 
     implementation(libs.kotlinx.datetime)
 
-    implementation(project(":common"))
-    implementation(project(":core"))
-
+    implementation(projects.common)
+    implementation(projects.core)
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    implementation(project(":navdestinations"))
+    implementation(projects.navdestinations)
 
     // Hilt for DI
     implementation(libs.hilt.android)
@@ -79,12 +78,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     // Ktor
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.serialization)
-    implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.bundles.ktor)
 
     // Kotlinx Serialization
     implementation(libs.kotlinx.serialization.json)
@@ -92,6 +86,6 @@ dependencies {
     // Work Manager
     implementation(libs.androidx.work.runtime.ktx)
 
-    implementation("com.yandex.android:authsdk:3.1.0")
+    implementation(libs.authsdk)
 
 }

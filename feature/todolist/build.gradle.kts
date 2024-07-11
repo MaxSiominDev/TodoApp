@@ -47,13 +47,11 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.bundles.compose)
     debugImplementation(libs.ui.tooling)
-    implementation(libs.androidx.material3)
+
     testImplementation(libs.junit)
     testImplementation(libs.google.truth)
     androidTestImplementation(libs.androidx.junit)
@@ -71,29 +69,22 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     // Room DB
-    implementation(libs.androidx.room.runtime)
+    implementation(libs.bundles.room)
     ksp(libs.androidx.room.room.compiler)
-    implementation(libs.androidx.room.ktx)
 
-    implementation(project(":common"))
-    implementation(project(":core"))
+    implementation(projects.common)
+    implementation(projects.core)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    implementation(project(":navdestinations"))
+    implementation(projects.navdestinations)
 
     // Hilt for DI
-    implementation(libs.hilt.android)
+    implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
 
     // Ktor
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.serialization)
-    implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.bundles.ktor)
 
     // Kotlinx Serialization
     implementation(libs.kotlinx.serialization.json)

@@ -2,6 +2,7 @@ package dev.maxsiomin.todoapp.plugins
 
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -9,8 +10,11 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import javax.inject.Inject
 
-abstract class ValidateApkSizeTask : DefaultTask() {
+abstract class ValidateApkSizeTask @Inject constructor(
+    private val tgApi: TgApi,
+) : DefaultTask() {
 
     @get:InputDirectory
     abstract val apkDir: DirectoryProperty
@@ -18,12 +22,19 @@ abstract class ValidateApkSizeTask : DefaultTask() {
     @get:Input
     abstract val maxApkSize: Property<Int>
 
+    @get:Input
+    abstract val token: Property<String>
+
+    @get:Input
+    abstract val chatId: Property<String>
+
     @get:Internal
-    val apkTooLarge: Property<Boolean> = project.objects.property(Boolean::class.java)
+    val size: Property<String> = project.objects.property(String::class.java)
 
     @TaskAction
     fun execute() = runBlocking {
-        var valid = true
+        val token = token.get()
+        val chatId = chatId.get()
         apkDir.get().asFile.listFiles()
             ?.filter { it.name.endsWith(".apk") }
             ?.forEach { apkFile ->
@@ -32,24 +43,12 @@ abstract class ValidateApkSizeTask : DefaultTask() {
                     val fileSizeInKB = fileSizeInBytes / 1024
                     val fileSizeInMB = fileSizeInKB / 1024
                     if (fileSizeInMB > maxApkSize.get()) {
-                        valid = false
+                        tgApi.sendMessage(message = "Apk too large", chatId = chatId, token = token)
+                        throw GradleException("Apk too large")
                     }
+                    size.set("Size: $fileSizeInMB MB")
                 }
             }
-        apkTooLarge.set(!valid)
-    }
-
-    private fun processApk(apkFile: File) {
-        if (apkFile.exists()) {
-            val fileSizeInBytes = apkFile.length()
-            val fileSizeInKB = fileSizeInBytes / 1024
-            val fileSizeInMB = fileSizeInKB / 1024
-            if (fileSizeInMB > maxApkSize.get()) {
-                apkTooLarge.set(true)
-            } else {
-                apkTooLarge.set(false)
-            }
-        }
     }
 
 }

@@ -24,7 +24,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Todo App"
+rootProject.name = "Todo-App"
 include(":app")
 include(":common")
 include(":feature:todolist")

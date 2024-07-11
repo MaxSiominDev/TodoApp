@@ -9,10 +9,12 @@ plugins {
 }
 
 val maxApkSizeValue = 20
+val validationEnabledValue = true
 telegramReporter {
     token.set(providers.environmentVariable("TG_TOKEN"))
     chatId.set(providers.environmentVariable("TG_CHAT"))
     maxApkSize.set(maxApkSizeValue)
+    validationEnabled.set(validationEnabledValue)
 }
 
 
@@ -96,16 +98,15 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    implementation(project(":navdestinations"))
+    implementation(projects.navdestinations)
 
-    implementation(project(":common"))
-    implementation(project(":core"))
-    implementation(project(":feature:todolist"))
-    implementation(project(":feature:auth"))
+    implementation(projects.common)
+    implementation(projects.core)
+    implementation(projects.feature.todolist)
+    implementation(projects.feature.auth)
 
     // Hilt for DI
-    implementation(libs.hilt.android)
+    implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
 
 }

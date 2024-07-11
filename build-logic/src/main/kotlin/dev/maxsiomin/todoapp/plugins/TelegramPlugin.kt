@@ -28,9 +28,12 @@ class TelegramPlugin : Plugin<Project> {
 
             val validateTaskProvider = project.tasks.register(
                 "validateApkSizeFor$name",
-                ValidateApkSizeTask::class.java
+                ValidateApkSizeTask::class.java,
+                api,
             ).apply {
                 configure {
+                    token.set(ext.token)
+                    chatId.set(ext.chatId)
                     apkDir.set(artifacts)
                     maxApkSize.set(ext.maxApkSize)
                 }
@@ -41,9 +44,13 @@ class TelegramPlugin : Plugin<Project> {
                 TgTask::class.java,
                 api,
             ).configure {
-                dependsOn(validateTaskProvider)
-                val apkTooLarge = validateTaskProvider.flatMap { it.apkTooLarge }
-                this.apkTooLarge.set(apkTooLarge)
+                val sizeStr: Property<String> = project.objects.property(String::class.java)
+                sizeStr.set("")
+                if (ext.validationEnabled.get() == true) {
+                    dependsOn(validateTaskProvider)
+                    sizeStr.set(validateTaskProvider.flatMap { it.size })
+                }
+                this.sizeStr.set(sizeStr)
                 apkDir.set(artifacts)
                 token.set(ext.token)
                 chatId.set(ext.chatId)
@@ -57,5 +64,6 @@ interface TelegramExtension {
     val chatId: Property<String>
     val token: Property<String>
     val maxApkSize: Property<Int>
+    val validationEnabled: Property<Boolean>
 }
 

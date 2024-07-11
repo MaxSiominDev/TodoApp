@@ -1,3 +1,5 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     includeBuild("build-logic")
     repositories {
@@ -20,7 +22,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Todo App"
+rootProject.name = "Todo-App"
 include(":app")
 include(":common")
 include(":feature:todolist")

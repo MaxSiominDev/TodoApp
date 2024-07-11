@@ -61,7 +61,7 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    implementation(project(":common"))
+    implementation(projects.common)
 
     implementation(libs.kotlinx.datetime)
 
