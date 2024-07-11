@@ -17,4 +17,6 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.core)
 
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+
 }

@@ -13,7 +13,6 @@ import org.gradle.kotlin.dsl.create
 
 class TelegramPlugin : Plugin<Project> {
 
-    @Suppress("DefaultLocale")
     override fun apply(project: Project) {
         val androidComponents =
             project.extensions.findByType(AndroidComponentsExtension::class.java)
