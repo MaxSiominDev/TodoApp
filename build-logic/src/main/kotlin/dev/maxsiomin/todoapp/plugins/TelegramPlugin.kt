@@ -8,7 +8,10 @@ import io.ktor.client.engine.okhttp.OkHttp
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.create
 
 class TelegramPlugin : Plugin<Project> {
@@ -29,13 +32,24 @@ class TelegramPlugin : Plugin<Project> {
                 "validateApkSizeFor$name",
                 ValidateApkSizeTask::class.java,
                 api,
-            ).apply {
-                configure {
-                    token.set(ext.token)
-                    chatId.set(ext.chatId)
-                    apkDir.set(artifacts)
-                    maxApkSize.set(ext.maxApkSize)
-                }
+            )
+            validateTaskProvider.configure {
+                token.set(ext.token)
+                chatId.set(ext.chatId)
+                apkDir.set(artifacts)
+                maxApkSize.set(ext.maxApkSize)
+            }
+
+            project.tasks.register(
+                "analyzeApkFor$name",
+                AnalyzeApkTask::class.java,
+                api,
+            ).configure {
+                dependsOn("createDebugApkListingFileRedirect")
+                token.set(ext.token)
+                chatId.set(ext.chatId)
+                apkDir.set(artifacts)
+                projectDir.set(project.projectDir)
             }
 
             project.tasks.register(
@@ -53,6 +67,10 @@ class TelegramPlugin : Plugin<Project> {
                 apkDir.set(artifacts)
                 token.set(ext.token)
                 chatId.set(ext.chatId)
+
+                if (ext.analysisEnabled.get() == true) {
+                    finalizedBy("analyzeApkFor$name")
+                }
             }
         }
     }
@@ -64,5 +82,6 @@ interface TelegramExtension {
     val token: Property<String>
     val maxApkSize: Property<Int>
     val validationEnabled: Property<Boolean>
+    val analysisEnabled: Property<Boolean>
 }
 

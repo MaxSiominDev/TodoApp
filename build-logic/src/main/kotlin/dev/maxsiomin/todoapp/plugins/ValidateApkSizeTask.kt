@@ -9,7 +9,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 import javax.inject.Inject
 
 abstract class ValidateApkSizeTask @Inject constructor(
@@ -35,20 +34,19 @@ abstract class ValidateApkSizeTask @Inject constructor(
     fun execute() = runBlocking {
         val token = token.get()
         val chatId = chatId.get()
-        apkDir.get().asFile.listFiles()
-            ?.filter { it.name.endsWith(".apk") }
-            ?.forEach { apkFile ->
-                if (apkFile.exists()) {
-                    val fileSizeInBytes = apkFile.length()
-                    val fileSizeInKB = fileSizeInBytes / 1024
-                    val fileSizeInMB = fileSizeInKB / 1024
-                    if (fileSizeInMB > maxApkSize.get()) {
-                        tgApi.sendMessage(message = "Apk too large", chatId = chatId, token = token)
-                        throw GradleException("Apk too large")
-                    }
-                    size.set("Size: $fileSizeInMB MB")
-                }
-            }
+
+        val apkFile = apkDir.get().asFile.listFiles()?.first { it.name.endsWith(".apk") }!!
+
+        val fileSizeInBytes = apkFile.length()
+        val fileSizeInKB = fileSizeInBytes / 1024
+        val fileSizeInMB = fileSizeInKB / 1024
+
+        if (fileSizeInMB > maxApkSize.get()) {
+            tgApi.sendMessage(message = "Apk too large", chatId = chatId, token = token)
+            throw GradleException("Apk too large")
+        }
+
+        size.set("Size: $fileSizeInMB MB")
     }
 
 }

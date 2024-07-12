@@ -10,11 +10,13 @@ plugins {
 
 val maxApkSizeValue = 20
 val validationEnabledValue = true
+val analysisEnabledValue = true
 telegramReporter {
     token.set(providers.environmentVariable("TG_TOKEN"))
     chatId.set(providers.environmentVariable("TG_CHAT"))
     maxApkSize.set(maxApkSizeValue)
     validationEnabled.set(validationEnabledValue)
+    analysisEnabled.set(analysisEnabledValue)
 }
 
 

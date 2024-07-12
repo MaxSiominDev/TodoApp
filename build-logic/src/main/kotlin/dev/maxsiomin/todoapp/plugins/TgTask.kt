@@ -32,17 +32,18 @@ abstract class TgTask @Inject constructor(
         val token = token.get()
         val chatId = chatId.get()
         val sizeStr = sizeStr.get()
-        apkDir.get().asFile.listFiles()
-            ?.filter { it.name.endsWith(".apk") }
-            ?.forEach { file ->
-                val variant = getVariantFromApkName(file.name)
-                val name = "todolist-$variant-${AndroidConst.VERSION_CODE}.apk"
-                tgApi.sendMessage(message = "Build finished", token = token, chatId = chatId)
-                tgApi.sendFile(file = file, filename = name, token = token, chatId = chatId)
-                if (sizeStr.isNotEmpty()) {
-                    tgApi.sendMessage(message = sizeStr, token = token, chatId = chatId)
-                }
-            }
+
+        val apkFile = apkDir.get().asFile.listFiles()?.first { it.name.endsWith(".apk") }!!
+
+        val variant = getVariantFromApkName(apkFile.name)
+        val name = "todolist-$variant-${AndroidConst.VERSION_CODE}.apk"
+
+        tgApi.sendMessage(message = "Build finished", token = token, chatId = chatId)
+        tgApi.sendFile(file = apkFile, filename = name, token = token, chatId = chatId)
+        if (sizeStr.isNotEmpty()) {
+            tgApi.sendMessage(message = sizeStr, token = token, chatId = chatId)
+        }
+
     }
 
     private fun getVariantFromApkName(name: String): String {
