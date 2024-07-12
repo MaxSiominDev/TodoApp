@@ -45,7 +45,7 @@ class TelegramPlugin : Plugin<Project> {
                 AnalyzeApkTask::class.java,
                 api,
             ).configure {
-                dependsOn("createDebugApkListingFileRedirect")
+                dependsOn("create${name}ApkListingFileRedirect")
                 token.set(ext.token)
                 chatId.set(ext.chatId)
                 apkDir.set(artifacts)
@@ -84,4 +84,3 @@ interface TelegramExtension {
     val validationEnabled: Property<Boolean>
     val analysisEnabled: Property<Boolean>
 }
-
