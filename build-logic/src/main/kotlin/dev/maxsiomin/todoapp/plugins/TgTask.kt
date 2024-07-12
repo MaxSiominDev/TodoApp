@@ -1,5 +1,6 @@
 package dev.maxsiomin.todoapp.plugins
 
+import AndroidConst
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -35,7 +36,7 @@ abstract class TgTask @Inject constructor(
             ?.filter { it.name.endsWith(".apk") }
             ?.forEach { file ->
                 val variant = getVariantFromApkName(file.name)
-                val name = "todolist-$variant-${1}.apk"
+                val name = "todolist-$variant-${AndroidConst.VERSION_CODE}.apk"
                 tgApi.sendMessage(message = "Build finished", token = token, chatId = chatId)
                 tgApi.sendFile(file = file, filename = name, token = token, chatId = chatId)
                 if (sizeStr.isNotEmpty()) {
