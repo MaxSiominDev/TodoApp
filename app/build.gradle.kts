@@ -85,6 +85,7 @@ dependencies {
     implementation(projects.core)
     implementation(projects.feature.todolist)
     implementation(projects.feature.auth)
+    implementation(projects.feature.settings)
 
     // Hilt for DI
     implementation(libs.bundles.hilt)

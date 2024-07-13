@@ -110,6 +110,7 @@ internal class HomeViewModel @Inject constructor(
                     refreshItems()
                 }
             }
+
             ConnectivityObserver.Status.Losing -> Unit
             ConnectivityObserver.Status.Lost -> Unit
             ConnectivityObserver.Status.Unavailable -> Unit
@@ -118,6 +119,7 @@ internal class HomeViewModel @Inject constructor(
 
     sealed class Effect {
         data class GoToEditScreen(val itemId: String?) : Effect()
+        data object GoToSettings : Effect()
         data class ShowMessage(val message: UiText) : Effect()
     }
 
@@ -130,6 +132,7 @@ internal class HomeViewModel @Inject constructor(
         data class OnCompleteViaDismission(val item: TodoItemUiModel) : Event()
         data object IconHideCompletedClicked : Event()
         data object Refresh : Event()
+        data object OnSettingsClicked : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -141,6 +144,7 @@ internal class HomeViewModel @Inject constructor(
             is Event.OnDeleteViaDismission -> onDeleteViaDismission(event.item)
             Event.IconHideCompletedClicked -> iconHideCompletedClicked()
             Event.Refresh -> refreshItems()
+            Event.OnSettingsClicked -> onEffect(Effect.GoToSettings)
         }
     }
 

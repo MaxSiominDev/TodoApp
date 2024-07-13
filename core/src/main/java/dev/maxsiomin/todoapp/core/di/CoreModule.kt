@@ -12,10 +12,9 @@ import dagger.hilt.components.SingletonComponent
 import dev.maxsiomin.todoapp.core.data.ConnectivityObserver
 import dev.maxsiomin.todoapp.core.data.JvmUuidGenerator
 import dev.maxsiomin.todoapp.core.data.AndroidConnectivityObserver
-import dev.maxsiomin.todoapp.core.data.PrefsKeys
-import dev.maxsiomin.todoapp.core.data.repository.TokenRepositoryImpl
+import dev.maxsiomin.todoapp.core.data.repository.ConfigRepositoryImpl
 import dev.maxsiomin.todoapp.core.domain.UuidGenerator
-import dev.maxsiomin.todoapp.core.domain.repository.TokenRepository
+import dev.maxsiomin.todoapp.core.domain.repository.ConfigRepository
 import dev.maxsiomin.todoapp.core.util.AndroidDeviceIdManager
 import dev.maxsiomin.todoapp.core.util.DeviceIdManager
 import dev.maxsiomin.todoapp.core.util.DispatcherProvider
@@ -49,13 +48,13 @@ internal interface CoreModule {
 
     @Singleton
     @Binds
-    fun bindTokenRepository(impl: TokenRepositoryImpl): TokenRepository
+    fun bindConfigRepository(impl: ConfigRepositoryImpl): ConfigRepository
 
     companion object {
 
         @Singleton
         @Provides
-        fun provideHttpClient(repository: TokenRepository): HttpClient {
+        fun provideHttpClient(repository: ConfigRepository): HttpClient {
             val token: String? = repository.getToken()
             return HttpClient(Android) {
                 install(ContentNegotiation) {

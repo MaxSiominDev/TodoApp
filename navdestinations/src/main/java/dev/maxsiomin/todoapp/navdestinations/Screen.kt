@@ -2,7 +2,7 @@ package dev.maxsiomin.todoapp.navdestinations
 
 import kotlinx.serialization.Serializable
 
-/** Containts all nav destionations in project */
+/** Contains all nav destinations in project */
 sealed class Screen {
 
     @Serializable
@@ -17,5 +17,8 @@ sealed class Screen {
             val itemId = "itemId"
         }
     }
+
+    @Serializable
+    data object SettingsScreen : Screen()
 
 }

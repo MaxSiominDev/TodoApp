@@ -5,5 +5,6 @@ object PrefsKeys {
     const val DEVICE_ID = "deviceId"
     const val REVISION = "revision"
     const val TOKEN = "token"
+    const val THEME = "theme"
 
 }
