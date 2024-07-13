@@ -56,6 +56,7 @@ internal class EditViewModel @Inject constructor(
         val showSelectDeadlineDateDialog: Boolean = false,
         val priority: Priority,
         val priorityDropdownExpanded: Boolean = false,
+        val showPriorityBottomSheet: Boolean = false,
     )
 
     override val _state: MutableStateFlow<State>
@@ -117,6 +118,8 @@ internal class EditViewModel @Inject constructor(
         data object CollapsePriorityDropdown : Event()
         data class NewPrioritySelected(val newPriority: Priority) : Event()
         data object CloseClicked : Event()
+        data object ShowPriorityBottomSheet : Event()
+        data object DismissPriorityBottomSheet : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -155,6 +158,14 @@ internal class EditViewModel @Inject constructor(
 
             Event.SelectDeadlineDialogDismissed -> _state.update {
                 it.copy(showSelectDeadlineDateDialog = false)
+            }
+
+            Event.ShowPriorityBottomSheet -> _state.update {
+                it.copy(showPriorityBottomSheet = true)
+            }
+
+            Event.DismissPriorityBottomSheet -> _state.update {
+                it.copy(showPriorityBottomSheet = false)
             }
         }
     }

@@ -13,22 +13,23 @@ composeBom = "2024.06.00"
 timber = "5.0.1"
 roomRuntime = "2.6.1"
 roomKtx = "2.6.1"
-ksp = "2.0.0-1.0.21"
+ksp = "2.0.0-1.0.22"
 appcompat = "1.7.0"
 material = "1.12.0"
 navigationCompose = "2.8.0-beta05"
 kotlinxSerialization = "2.0.0"
-kotlinxSerializationJson = "1.6.3"
+kotlinxSerializationJson = "1.7.1"
 hiltAndroid = "2.51.1"
 hiltAndroidTesting = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 uiTooling = "1.6.8"
 truthVersion = "1.4.2"
 roomTesting = "2.6.1"
-ktor = "2.3.9"
+ktor = "2.3.12"
 preferenceKtx = "1.2.1"
 workRuntimeKtx = "2.9.0"
 coroutines = "1.7.3"
+materialIconsCore = "1.6.8"
 
 [libraries]
 agp = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -74,6 +75,8 @@ androidx-preference-ktx = { module = "androidx.preference:preference-ktx", versi
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -106,3 +109,5 @@ compose = [
     "androidx-ui-tooling-preview",
     "androidx-material3",
 ]
+
+icons = ["androidx-material-icons-core", "androidx-material-icons-extended"]

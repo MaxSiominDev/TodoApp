@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -40,7 +41,10 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -80,8 +84,9 @@ fun EditScreen(navController: NavHostController, showSnackbar: SnackbarCallback)
             is EditViewModel.Effect.ShowMessage -> showSnackbar(
                 SnackbarInfo(message = event.message)
             )
+
             is EditViewModel.Effect.ShowToast -> {
-                Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT,).show()
+                Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -243,6 +248,7 @@ private fun DescriptionTextField(
         shape = shape,
     ) {
         TextField(
+            textStyle = AppTheme.typography.body,
             modifier = modifier
                 .fillMaxWidth(),
             value = state.description,
@@ -277,7 +283,7 @@ private fun PriorityTexts(
         modifier = Modifier
             .padding(16.dp)
             .clickable {
-                onEvent(EditViewModel.Event.ExpandPriorityDropdown)
+                onEvent(EditViewModel.Event.ShowPriorityBottomSheet)
             }
     ) {
         Text(text = stringResource(R.string.priority), style = AppTheme.typography.body)
@@ -285,17 +291,27 @@ private fun PriorityTexts(
         val priorityTextResId = remember(state.priority) {
             when (state.priority) {
                 Priority.Default -> R.string.default_
-                Priority.High -> R.string.high_priority
-                Priority.Low -> R.string.low_priority
+                Priority.High -> R.string.high
+                Priority.Low -> R.string.low
             }
         }
         Text(text = stringResource(id = priorityTextResId), style = AppTheme.typography.subhead)
-        SelectPriorityDropdown(state, onEvent)
+    }
+
+    if (state.showPriorityBottomSheet) {
+        PriorityBottomSheet(
+            onDismissRequest = {
+                onEvent(EditViewModel.Event.DismissPriorityBottomSheet)
+            },
+            onSelect = { newPriority ->
+                onEvent(EditViewModel.Event.NewPrioritySelected(newPriority = newPriority))
+            }
+        )
     }
 
 }
 
-@Composable
+/**@Composable
 private fun SelectPriorityDropdown(
     state: EditViewModel.State,
     onEvent: (EditViewModel.Event) -> Unit
@@ -342,7 +358,7 @@ private fun SelectPriorityDropdown(
             },
         )
     }
-}
+}*/
 
 @Composable
 private fun DeadlineRow(

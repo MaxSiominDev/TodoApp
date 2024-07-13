@@ -27,5 +27,6 @@
     <string name="offline_copy">You\'re viewing offline copy of your todo items</string>
     <string name="retry">Retry</string>
     <string name="settings">Settings</string>
+    <string name="default_priority">Default priority</string>
 
 </resources>
