@@ -55,7 +55,6 @@ internal class EditViewModel @Inject constructor(
         val deadLineSwitchIsOn: Boolean,
         val showSelectDeadlineDateDialog: Boolean = false,
         val priority: Priority,
-        val priorityDropdownExpanded: Boolean = false,
         val showPriorityBottomSheet: Boolean = false,
     )
 
@@ -114,8 +113,6 @@ internal class EditViewModel @Inject constructor(
         data class NewDeadlineDateSelected(val newDateTime: LocalDate) : Event()
         data object SelectDeadlineDateClicked : Event()
         data object SelectDeadlineDialogDismissed : Event()
-        data object ExpandPriorityDropdown : Event()
-        data object CollapsePriorityDropdown : Event()
         data class NewPrioritySelected(val newPriority: Priority) : Event()
         data object CloseClicked : Event()
         data object ShowPriorityBottomSheet : Event()
@@ -142,16 +139,8 @@ internal class EditViewModel @Inject constructor(
                 it.copy(showSelectDeadlineDateDialog = true)
             }
 
-            Event.ExpandPriorityDropdown -> _state.update {
-                it.copy(priorityDropdownExpanded = true)
-            }
-
-            Event.CollapsePriorityDropdown -> _state.update {
-                it.copy(priorityDropdownExpanded = false)
-            }
-
             is Event.NewPrioritySelected -> _state.update {
-                it.copy(priority = event.newPriority, priorityDropdownExpanded = false)
+                it.copy(priority = event.newPriority)
             }
 
             Event.CloseClicked -> onEffect(Effect.GoBack)

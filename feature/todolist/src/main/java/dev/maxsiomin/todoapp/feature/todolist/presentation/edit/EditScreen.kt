@@ -311,55 +311,6 @@ private fun PriorityTexts(
 
 }
 
-/**@Composable
-private fun SelectPriorityDropdown(
-    state: EditViewModel.State,
-    onEvent: (EditViewModel.Event) -> Unit
-) {
-    DropdownMenu(
-        modifier = Modifier.background(AppTheme.colors.backSecondary),
-        expanded = state.priorityDropdownExpanded,
-        onDismissRequest = { onEvent(EditViewModel.Event.CollapsePriorityDropdown) }
-    ) {
-        DropdownMenuItem(
-            colors = MenuDefaults.itemColors(
-                textColor = AppTheme.colors.labelPrimary,
-            ),
-            text = { Text(stringResource(R.string.low)) },
-            onClick = { onEvent(EditViewModel.Event.NewPrioritySelected(Priority.Low)) },
-            leadingIcon = {
-                Icon(
-                    tint = AppTheme.colors.colorGray,
-                    painter = painterResource(R.drawable.icon_priority_low),
-                    contentDescription = null,
-                )
-            }
-        )
-        DropdownMenuItem(
-            colors = MenuDefaults.itemColors(
-                textColor = AppTheme.colors.labelPrimary,
-            ),
-            text = { Text(stringResource(R.string.default_)) },
-            onClick = { onEvent(EditViewModel.Event.NewPrioritySelected(Priority.Default)) },
-            leadingIcon = { Spacer(modifier = Modifier.width(24.dp)) }
-        )
-        DropdownMenuItem(
-            colors = MenuDefaults.itemColors(
-                textColor = AppTheme.colors.colorRed,
-            ),
-            text = { Text(stringResource(R.string.high)) },
-            onClick = { onEvent(EditViewModel.Event.NewPrioritySelected(Priority.High)) },
-            leadingIcon = {
-                Icon(
-                    tint = AppTheme.colors.colorRed,
-                    painter = painterResource(R.drawable.icon_priority_high),
-                    contentDescription = stringResource(R.string.high_priority),
-                )
-            },
-        )
-    }
-}*/
-
 @Composable
 private fun DeadlineRow(
     state: EditViewModel.State,
