@@ -97,9 +97,12 @@ internal class HomeViewModel @Inject constructor(
         } else {
             newItems
         }
+        val withoutDeletedItem = lastDeletedItem?.let { deletedItem ->
+            filteredItemsByIsCompleted.filter { it.id != deletedItem.id }
+        } ?: filteredItemsByIsCompleted
         _state.update {
             it.copy(
-                todoItems = filteredItemsByIsCompleted.map { item -> item.toTodoItemUiModel() },
+                todoItems = withoutDeletedItem.map { item -> item.toTodoItemUiModel() },
                 completedCount = newIsCompletedCount.toString(),
             )
         }
@@ -140,8 +143,8 @@ internal class HomeViewModel @Inject constructor(
         data object IconHideCompletedClicked : Event()
         data object Refresh : Event()
         data object OnSettingsClicked : Event()
-        data object CancelDeletion : Event()
-        data object FinallyDelete : Event()
+        data class CancelDeletion(val id: String) : Event()
+        data class FinallyDelete(val id: String) : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -154,8 +157,8 @@ internal class HomeViewModel @Inject constructor(
             Event.IconHideCompletedClicked -> iconHideCompletedClicked()
             Event.Refresh -> refreshItems()
             Event.OnSettingsClicked -> onEffect(Effect.GoToSettings)
-            Event.CancelDeletion -> cancelDeletion()
-            Event.FinallyDelete -> finallyDelete()
+            is Event.CancelDeletion -> cancelDeletion()
+            is Event.FinallyDelete -> finallyDelete("event")
         }
     }
 
@@ -173,6 +176,9 @@ internal class HomeViewModel @Inject constructor(
     }
 
     private fun onDeleteViaDismission(todoItem: TodoItemUiModel) {
+        if (lastDeletedItem != null) {
+            //finallyDelete("condition")
+        }
         viewModelScope.launch {
             val item = todoItems.firstOrNull {
                 it.id == todoItem.id
@@ -192,7 +198,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun finallyDelete() {
+    private fun finallyDelete(arg: String) {
         val item = lastDeletedItem ?: return
         lastDeletedItem = null
         viewModelScope.launch {
