@@ -5,7 +5,7 @@ plugins {
 gradlePlugin {
     plugins.register("telegram-reporter") {
         id = "telegram-reporter"
-        implementationClass = "dev.maxsiomin.todoapp.TelegramPlugin"
+        implementationClass = "dev.maxsiomin.todoapp.plugins.TelegramPlugin"
     }
 }
 
@@ -16,5 +16,7 @@ dependencies {
 
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.core)
+
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 
 }

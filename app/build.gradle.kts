@@ -8,28 +8,25 @@ plugins {
     id("telegram-reporter")
 }
 
+val maxApkSizeValue = 20
+val validationEnabledValue = true
+val analysisEnabledValue = true
 telegramReporter {
     token.set(providers.environmentVariable("TG_TOKEN"))
     chatId.set(providers.environmentVariable("TG_CHAT"))
+    maxApkSize.set(maxApkSizeValue)
+    validationEnabled.set(validationEnabledValue)
+    analysisEnabled.set(analysisEnabledValue)
 }
 
 
 android {
     namespace = "dev.maxsiomin.todoapp"
-    compileSdk = 34
+
+    baseAndroidConfig()
 
     defaultConfig {
-        applicationId = "dev.maxsiomin.todoapp"
-        minSdk = 26
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-
+        targetSdk = AndroidConst.TARGET_SKD
         manifestPlaceholders["YANDEX_CLIENT_ID"] = "e35f47e544f74071b3bc299a5961bf4e"
     }
 
@@ -49,16 +46,6 @@ android {
             }
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    buildFeatures {
-        compose = true
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -73,12 +60,10 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(libs.bundles.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -94,16 +79,15 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    implementation(project(":navdestinations"))
+    implementation(projects.navdestinations)
 
-    implementation(project(":common"))
-    implementation(project(":core"))
-    implementation(project(":feature:todolist"))
-    implementation(project(":feature:auth"))
+    implementation(projects.common)
+    implementation(projects.core)
+    implementation(projects.feature.todolist)
+    implementation(projects.feature.auth)
 
     // Hilt for DI
-    implementation(libs.hilt.android)
+    implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
 
 }
