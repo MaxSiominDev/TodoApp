@@ -26,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,6 +56,7 @@ import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.presentation.SnackbarCallback
 import dev.maxsiomin.common.presentation.SnackbarInfo
+import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfig
@@ -78,6 +81,27 @@ internal fun HomeScreen(navController: NavHostController, showSnackbar: Snackbar
             is HomeViewModel.Effect.ShowMessage -> showSnackbar(
                 SnackbarInfo(message = event.message)
             )
+
+            is HomeViewModel.Effect.OnItemDeletedMessage -> {
+                showSnackbar(
+                    SnackbarInfo(
+                        message = event.name,
+                        action = UiText.StringResource(R.string.undo),
+                        duration = SnackbarDuration.Long,
+                        dismissPreviousSnackbarImmediately = true,
+                        onResult = { result ->
+                            when (result) {
+                                SnackbarResult.Dismissed -> viewModel.onEvent(
+                                    HomeViewModel.Event.FinallyDelete
+                                )
+                                SnackbarResult.ActionPerformed -> viewModel.onEvent(
+                                    HomeViewModel.Event.CancelDeletion
+                                )
+                            }
+                        }
+                    )
+                )
+            }
 
             HomeViewModel.Effect.GoToSettings -> {
                 navController.navigate(Screen.SettingsScreen)

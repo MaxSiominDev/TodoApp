@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,10 +26,13 @@ internal fun TodoApp(appState: TodoAppState) {
     val showSnackbar: (SnackbarInfo) -> Unit = remember {
         { info: SnackbarInfo ->
             scope.launch {
+                if (info.dismissPreviousSnackbarImmediately) {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                }
                 snackbarHostState.showSnackbar(
                     message = info.message.asString(context),
                     actionLabel = info.action.asString(context),
-                    duration = SnackbarDuration.Short,
+                    duration = info.duration,
                 ).also { result ->
                     info.onResult?.invoke(result)
                 }

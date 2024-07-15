@@ -11,11 +11,14 @@ import dev.maxsiomin.todoapp.core.data.ConnectivityObserver
 import dev.maxsiomin.todoapp.core.util.DispatcherProvider
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.TodoItem
+import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.AddTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.DeleteTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.EditTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetAllTodoItemsUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.ScheduleTodoItemsSyncUseCase
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,6 +30,7 @@ internal class HomeViewModel @Inject constructor(
     private val getAllTodoItemsUseCase: GetAllTodoItemsUseCase,
     private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
     private val editTodoItemUseCase: EditTodoItemUseCase,
+    private val addTodoItemUseCase: AddTodoItemUseCase,
     private val scheduleTodoItemsSyncUseCase: ScheduleTodoItemsSyncUseCase,
     private val connectivityObserver: ConnectivityObserver,
     dispatchers: DispatcherProvider,
@@ -35,6 +39,8 @@ internal class HomeViewModel @Inject constructor(
     private var todoItems = emptyList<TodoItem>()
 
     private var refreshItemsJob: Job? = null
+
+    private var lastDeletedItem: TodoItem? = null
 
     data class State(
         val todoItems: List<TodoItemUiModel> = emptyList(),
@@ -78,13 +84,13 @@ internal class HomeViewModel @Inject constructor(
 
             is Resource.Success -> {
                 val newItems = resource.data
+                todoItems = newItems
                 processTodoItems(newItems)
             }
         }
     }
 
     private fun processTodoItems(newItems: List<TodoItem>) {
-        todoItems = newItems
         val newIsCompletedCount = newItems.count { it.isCompleted }
         val filteredItemsByIsCompleted = if (state.value.hideCompleted) {
             newItems.filter { !it.isCompleted }
@@ -121,6 +127,7 @@ internal class HomeViewModel @Inject constructor(
         data class GoToEditScreen(val itemId: String?) : Effect()
         data object GoToSettings : Effect()
         data class ShowMessage(val message: UiText) : Effect()
+        data class OnItemDeletedMessage(val name: UiText) : Effect()
     }
 
 
@@ -133,6 +140,8 @@ internal class HomeViewModel @Inject constructor(
         data object IconHideCompletedClicked : Event()
         data object Refresh : Event()
         data object OnSettingsClicked : Event()
+        data object CancelDeletion : Event()
+        data object FinallyDelete : Event()
     }
 
     override fun onEvent(event: Event) {
@@ -145,6 +154,8 @@ internal class HomeViewModel @Inject constructor(
             Event.IconHideCompletedClicked -> iconHideCompletedClicked()
             Event.Refresh -> refreshItems()
             Event.OnSettingsClicked -> onEffect(Effect.GoToSettings)
+            Event.CancelDeletion -> cancelDeletion()
+            Event.FinallyDelete -> finallyDelete()
         }
     }
 
@@ -166,8 +177,32 @@ internal class HomeViewModel @Inject constructor(
             val item = todoItems.firstOrNull {
                 it.id == todoItem.id
             } ?: return@launch
+
+
+            val newList = todoItems.filter { it.id != item.id }
+            processTodoItems(newList)
+
+            onEffect(
+                Effect.OnItemDeletedMessage(
+                    UiText.DynamicString(item.description)
+                )
+            )
+
+            lastDeletedItem = item
+        }
+    }
+
+    private fun finallyDelete() {
+        val item = lastDeletedItem ?: return
+        lastDeletedItem = null
+        viewModelScope.launch {
             deleteTodoItemUseCase(item)
         }
+    }
+
+    private fun cancelDeletion() {
+        lastDeletedItem = null
+        processTodoItems(todoItems)
     }
 
     private fun onCompleteViaDismission(todoItem: TodoItemUiModel) {

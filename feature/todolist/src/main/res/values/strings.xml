@@ -28,5 +28,6 @@
     <string name="retry">Retry</string>
     <string name="settings">Settings</string>
     <string name="default_priority">Default priority</string>
+    <string name="undo">Undo</string>
 
 </resources>
