@@ -2,6 +2,7 @@ package dev.maxsiomin.todoapp.feature.todolist.presentation.edit
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +54,7 @@ internal fun PriorityBottomSheet(
         containerColor = AppTheme.colors.backSecondary,
         modifier = modifier,
         sheetState = sheetState,
-        onDismissRequest = { onDismissRequest() }
+        onDismissRequest = onDismissRequest
     ) {
 
         ItemRow(

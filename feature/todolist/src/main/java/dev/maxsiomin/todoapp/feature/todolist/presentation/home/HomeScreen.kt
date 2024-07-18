@@ -92,10 +92,10 @@ internal fun HomeScreen(navController: NavHostController, showSnackbar: Snackbar
                         onResult = { result ->
                             when (result) {
                                 SnackbarResult.Dismissed -> viewModel.onEvent(
-                                    HomeViewModel.Event.FinallyDelete
+                                    HomeViewModel.Event.FinallyDelete(event.id)
                                 )
                                 SnackbarResult.ActionPerformed -> viewModel.onEvent(
-                                    HomeViewModel.Event.CancelDeletion
+                                    HomeViewModel.Event.CancelDeletion(event.id)
                                 )
                             }
                         }

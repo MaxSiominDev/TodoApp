@@ -130,7 +130,7 @@ internal class HomeViewModel @Inject constructor(
         data class GoToEditScreen(val itemId: String?) : Effect()
         data object GoToSettings : Effect()
         data class ShowMessage(val message: UiText) : Effect()
-        data class OnItemDeletedMessage(val name: UiText) : Effect()
+        data class OnItemDeletedMessage(val name: UiText, val id: String) : Effect()
     }
 
 
@@ -190,7 +190,8 @@ internal class HomeViewModel @Inject constructor(
 
             onEffect(
                 Effect.OnItemDeletedMessage(
-                    UiText.DynamicString(item.description)
+                    name = UiText.DynamicString(item.description),
+                    id = item.id,
                 )
             )
 
