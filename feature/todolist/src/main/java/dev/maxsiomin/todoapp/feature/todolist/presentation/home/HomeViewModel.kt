@@ -17,8 +17,6 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.EditTodoItemUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.GetAllTodoItemsUseCase
 import dev.maxsiomin.todoapp.feature.todolist.domain.usecase.ScheduleTodoItemsSyncUseCase
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -130,16 +128,16 @@ internal class HomeViewModel @Inject constructor(
         data class GoToEditScreen(val itemId: String?) : Effect()
         data object GoToSettings : Effect()
         data class ShowMessage(val message: UiText) : Effect()
-        data class OnItemDeletedMessage(val name: UiText) : Effect()
+        data class OnItemDeletedMessage(val name: UiText, val id: String) : Effect()
     }
 
 
     sealed class Event {
-        data class CheckboxValueChanged(val newValue: Boolean, val item: TodoItemUiModel) : Event()
+        data class CheckboxValueChanged(val newValue: Boolean, val itemId: String) : Event()
         data object AddClicked : Event()
-        data class EditItem(val item: TodoItemUiModel) : Event()
-        data class OnDeleteViaDismission(val item: TodoItemUiModel) : Event()
-        data class OnCompleteViaDismission(val item: TodoItemUiModel) : Event()
+        data class EditItem(val itemId: String) : Event()
+        data class OnDeleteViaDismission(val itemId: String) : Event()
+        data class OnCompleteViaDismission(val itemId: String) : Event()
         data object IconHideCompletedClicked : Event()
         data object Refresh : Event()
         data object OnSettingsClicked : Event()
@@ -150,22 +148,22 @@ internal class HomeViewModel @Inject constructor(
     override fun onEvent(event: Event) {
         when (event) {
             Event.AddClicked -> onEffect(Effect.GoToEditScreen(itemId = null))
-            is Event.CheckboxValueChanged -> changeProgress(event.newValue, event.item)
-            is Event.EditItem -> onEffect(Effect.GoToEditScreen(itemId = event.item.id))
-            is Event.OnCompleteViaDismission -> onCompleteViaDismission(event.item)
-            is Event.OnDeleteViaDismission -> onDeleteViaDismission(event.item)
+            is Event.CheckboxValueChanged -> changeProgress(event.newValue, event.itemId)
+            is Event.EditItem -> onEffect(Effect.GoToEditScreen(itemId = event.itemId))
+            is Event.OnCompleteViaDismission -> onCompleteViaDismission(event.itemId)
+            is Event.OnDeleteViaDismission -> onDeleteViaDismission(event.itemId)
             Event.IconHideCompletedClicked -> iconHideCompletedClicked()
             Event.Refresh -> refreshItems()
             Event.OnSettingsClicked -> onEffect(Effect.GoToSettings)
             is Event.CancelDeletion -> cancelDeletion()
-            is Event.FinallyDelete -> finallyDelete("event")
+            is Event.FinallyDelete -> finallyDelete(event.id)
         }
     }
 
-    private fun changeProgress(isCompleted: Boolean, todoItem: TodoItemUiModel) {
+    private fun changeProgress(isCompleted: Boolean, itemId: String) {
         viewModelScope.launch {
             val item = todoItems.firstOrNull {
-                it.id == todoItem.id
+                it.id == itemId
             } ?: return@launch
             val editedItem = item.copy(
                 isCompleted = isCompleted,
@@ -175,22 +173,19 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onDeleteViaDismission(todoItem: TodoItemUiModel) {
-        if (lastDeletedItem != null) {
-            //finallyDelete("condition")
-        }
+    private fun onDeleteViaDismission(itemId: String) {
         viewModelScope.launch {
             val item = todoItems.firstOrNull {
-                it.id == todoItem.id
+                it.id == itemId
             } ?: return@launch
 
-
-            val newList = todoItems.filter { it.id != item.id }
-            processTodoItems(newList)
+            lastDeletedItem = item
+            processTodoItems(todoItems)
 
             onEffect(
                 Effect.OnItemDeletedMessage(
-                    UiText.DynamicString(item.description)
+                    name = UiText.DynamicString(item.description),
+                    id = itemId,
                 )
             )
 
@@ -198,10 +193,16 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun finallyDelete(arg: String) {
-        val item = lastDeletedItem ?: return
-        lastDeletedItem = null
+    private fun finallyDelete(itemId: String) {
+        lastDeletedItem?.let {
+            if (itemId == it.id) {
+                lastDeletedItem = null
+            }
+        }
         viewModelScope.launch {
+            val item = todoItems.firstOrNull {
+                it.id == itemId
+            } ?: return@launch
             deleteTodoItemUseCase(item)
         }
     }
@@ -211,10 +212,10 @@ internal class HomeViewModel @Inject constructor(
         processTodoItems(todoItems)
     }
 
-    private fun onCompleteViaDismission(todoItem: TodoItemUiModel) {
+    private fun onCompleteViaDismission(itemId: String) {
         viewModelScope.launch {
             val item = todoItems.firstOrNull {
-                it.id == todoItem.id
+                it.id == itemId
             } ?: return@launch
             val completedItem = item.copy(
                 isCompleted = true,
