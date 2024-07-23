@@ -8,7 +8,7 @@ fun BaseExtension.baseAndroidConfig() {
         versionCode = AndroidConst.VERSION_CODE
         versionName = AndroidConst.VERSION_NAME
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "dev.maxsiomin.todoapp.HiltTestRunner"
         consumerProguardFiles("consumer-rules.pro")
 
         vectorDrawables {

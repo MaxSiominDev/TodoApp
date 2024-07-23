@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,7 +50,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.presentation.SnackbarCallback
@@ -63,20 +61,21 @@ import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfig
 import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfigProvider
 import dev.maxsiomin.todoapp.feature.todolist.R
 import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
-import dev.maxsiomin.todoapp.navdestinations.Screen
 import kotlinx.datetime.LocalDate
 
 @Composable
-internal fun HomeScreen(navController: NavHostController, showSnackbar: SnackbarCallback) {
+internal fun HomeScreen(
+    goToEditScreen: (String?) -> Unit,
+    goToSettingsScreen: () -> Unit,
+    showSnackbar: SnackbarCallback,
+) {
 
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     CollectFlow(viewModel.effectFlow) { event ->
         when (event) {
-            is HomeViewModel.Effect.GoToEditScreen -> navController.navigate(
-                Screen.EditScreen(itemId = event.itemId)
-            )
+            is HomeViewModel.Effect.GoToEditScreen -> goToEditScreen(event.itemId)
 
             is HomeViewModel.Effect.ShowMessage -> showSnackbar(
                 SnackbarInfo(message = event.message)
@@ -103,9 +102,7 @@ internal fun HomeScreen(navController: NavHostController, showSnackbar: Snackbar
                 )
             }
 
-            HomeViewModel.Effect.GoToSettings -> {
-                navController.navigate(Screen.SettingsScreen)
-            }
+            HomeViewModel.Effect.GoToSettings -> goToSettingsScreen()
         }
     }
 
@@ -137,6 +134,7 @@ private fun HomeScreenContentWithTopAppBar(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        floatingActionButton = { FabAdd(onEvent = onEvent) },
         topBar = {
             TopBar(
                 state = state,
@@ -221,7 +219,7 @@ private fun TopBarContent(
 }
 
 @Composable
-private fun BoxScope.HomeScreenMainContent(
+private fun HomeScreenMainContent(
     state: HomeViewModel.State,
     listState: LazyListState,
     onEvent: (HomeViewModel.Event) -> Unit
@@ -253,13 +251,6 @@ private fun BoxScope.HomeScreenMainContent(
             }
         }
     }
-
-    FabAdd(
-        onEvent = onEvent,
-        modifier = Modifier
-            .padding(end = 24.dp, bottom = 36.dp)
-            .align(Alignment.BottomEnd)
-    )
 
 }
 
@@ -340,7 +331,7 @@ private fun FabAdd(onEvent: (HomeViewModel.Event) -> Unit, modifier: Modifier = 
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
-            contentDescription = stringResource(R.string.add),
+            contentDescription = stringResource(R.string.add_todo),
         )
     }
 }

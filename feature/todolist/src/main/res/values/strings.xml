@@ -10,7 +10,7 @@
     <string name="my_todos">My todos</string>
     <string name="completed">Completed — %1$s</string>
     <string name="unknown_error">Unknown error</string>
-    <string name="add">Add todo</string>
+    <string name="add_todo">Add todo</string>
     <string name="go_back_without_saving">Go back without saving</string>
     <string name="save">Save</string>
     <string name="what_to_do">What to do…</string>
