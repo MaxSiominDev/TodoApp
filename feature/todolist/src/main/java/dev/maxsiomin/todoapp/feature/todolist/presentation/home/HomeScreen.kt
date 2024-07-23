@@ -19,12 +19,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -53,6 +56,7 @@ import dev.maxsiomin.common.extensions.now
 import dev.maxsiomin.common.extensions.toLocalizedDate
 import dev.maxsiomin.common.presentation.SnackbarCallback
 import dev.maxsiomin.common.presentation.SnackbarInfo
+import dev.maxsiomin.common.presentation.UiText
 import dev.maxsiomin.common.util.CollectFlow
 import dev.maxsiomin.todoapp.core.presentation.theme.AppTheme
 import dev.maxsiomin.todoapp.core.presentation.theme.PreviewConfig
@@ -77,6 +81,31 @@ internal fun HomeScreen(navController: NavHostController, showSnackbar: Snackbar
             is HomeViewModel.Effect.ShowMessage -> showSnackbar(
                 SnackbarInfo(message = event.message)
             )
+
+            is HomeViewModel.Effect.OnItemDeletedMessage -> {
+                showSnackbar(
+                    SnackbarInfo(
+                        message = event.name,
+                        action = UiText.StringResource(R.string.undo),
+                        duration = SnackbarDuration.Long,
+                        dismissPreviousSnackbarImmediately = true,
+                        onResult = { result ->
+                            when (result) {
+                                SnackbarResult.Dismissed -> viewModel.onEvent(
+                                    HomeViewModel.Event.FinallyDelete(event.id)
+                                )
+                                SnackbarResult.ActionPerformed -> viewModel.onEvent(
+                                    HomeViewModel.Event.CancelDeletion(event.id)
+                                )
+                            }
+                        }
+                    )
+                )
+            }
+
+            HomeViewModel.Effect.GoToSettings -> {
+                navController.navigate(Screen.SettingsScreen)
+            }
         }
     }
 
@@ -186,7 +215,8 @@ private fun TopBarContent(
         }
         Spacer(modifier = Modifier.weight(1f))
         IconRetry(onEvent = onEvent)
-        IconHideCompleted(state, onEvent, Modifier.padding(end = 16.dp))
+        IconHideCompleted(state, onEvent)
+        IconSettings(onEvent = onEvent, Modifier.padding(end = 16.dp))
     }
 }
 
@@ -225,8 +255,8 @@ private fun BoxScope.HomeScreenMainContent(
     }
 
     FabAdd(
-        onEvent,
-        Modifier
+        onEvent = onEvent,
+        modifier = Modifier
             .padding(end = 24.dp, bottom = 36.dp)
             .align(Alignment.BottomEnd)
     )
@@ -279,6 +309,23 @@ private fun IconHideCompleted(
             tint = AppTheme.colors.colorBlue,
             painter = painterResource(painterRes),
             contentDescription = stringResource(contentDescriptionRes)
+        )
+    }
+}
+
+@Composable
+private fun IconSettings(
+    onEvent: (HomeViewModel.Event) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = { onEvent(HomeViewModel.Event.OnSettingsClicked) }
+    ) {
+        Icon(
+            tint = AppTheme.colors.colorBlue,
+            imageVector = Icons.Filled.Settings,
+            contentDescription = stringResource(R.string.settings)
         )
     }
 }

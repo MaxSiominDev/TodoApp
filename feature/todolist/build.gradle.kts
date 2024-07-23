@@ -37,4 +37,6 @@ dependencies {
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
 
+    implementation(libs.bundles.icons)
+
 }

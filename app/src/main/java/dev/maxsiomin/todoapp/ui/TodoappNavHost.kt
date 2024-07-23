@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import dev.maxsiomin.common.presentation.SnackbarCallback
 import dev.maxsiomin.todoapp.TodoAppState
 import dev.maxsiomin.todoapp.feature.auth.presentation.addAuthNavigation
+import dev.maxsiomin.todoapp.feature.settings.presentation.addSettingNavigation
 import dev.maxsiomin.todoapp.feature.todolist.presentation.addTodolistNavigation
 import dev.maxsiomin.todoapp.navdestinations.Screen
 
@@ -19,6 +20,7 @@ internal fun TodoappNavHost(appState: TodoAppState, showSnackbar: SnackbarCallba
     NavHost(navController = navController, startDestination = startDestination) {
         addAuthNavigation(navController = navController, showSnackbar = showSnackbar)
         addTodolistNavigation(navController = navController, showSnackbar = showSnackbar)
+        addSettingNavigation(navController = navController)
     }
 
 }

@@ -54,12 +54,12 @@ internal fun TodoItemComposable(
         confirmValueChange = {
             when (it) {
                 SwipeToDismissBoxValue.StartToEnd -> {
-                    onEvent(HomeViewModel.Event.OnCompleteViaDismission(currentItem.value))
+                    onEvent(HomeViewModel.Event.OnCompleteViaDismission(currentItem.value.id))
                     false
                 }
 
                 SwipeToDismissBoxValue.EndToStart -> {
-                    onEvent(HomeViewModel.Event.OnDeleteViaDismission(currentItem.value))
+                    onEvent(HomeViewModel.Event.OnDeleteViaDismission(currentItem.value.id))
                     false
                 }
 
@@ -154,7 +154,7 @@ private fun TodoItemComposableContent(
             checked = todoItem.isCompleted,
             onCheckedChange = {
                 onEvent(
-                    HomeViewModel.Event.CheckboxValueChanged(newValue = it, item = todoItem)
+                    HomeViewModel.Event.CheckboxValueChanged(newValue = it, itemId = todoItem.id)
                 )
             },
             colors = CheckboxDefaults.colors(
@@ -193,7 +193,7 @@ private fun TodoItemComposableContent(
         }
 
         IconButton(onClick = {
-            onEvent(HomeViewModel.Event.EditItem(todoItem))
+            onEvent(HomeViewModel.Event.EditItem(todoItem.id))
         }) {
             Icon(
                 tint = AppTheme.colors.labelTertiary,
