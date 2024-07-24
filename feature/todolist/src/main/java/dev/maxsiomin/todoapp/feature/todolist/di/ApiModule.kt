@@ -10,7 +10,7 @@ import dev.maxsiomin.todoapp.feature.todolist.data.remote.TodoItemsApiImpl
 
 @Module
 @InstallIn(ViewModelComponent::class)
-internal interface NetworkModule {
+internal interface ApiModule {
 
     @ViewModelScoped
     @Binds

@@ -20,6 +20,9 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
 
+    // MockWebServer for backend mocking
+    testImplementation(libs.mockwebserver)
+
     testImplementation(libs.junit)
     testImplementation(libs.google.truth)
     androidTestImplementation(libs.androidx.junit)

@@ -15,7 +15,15 @@ fun NavGraphBuilder.addTodolistNavigation(
 ) {
 
     composable<Screen.HomeScreen> {
-        HomeScreen(navController = navController, showSnackbar = showSnackbar)
+        HomeScreen(
+           goToEditScreen = { itemId: String? ->
+               navController.navigate(Screen.EditScreen(itemId = itemId))
+           },
+            goToSettingsScreen = {
+                navController.navigate(Screen.SettingsScreen)
+            },
+            showSnackbar = showSnackbar,
+        )
     }
 
     composable<Screen.EditScreen> {

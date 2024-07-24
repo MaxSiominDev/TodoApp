@@ -9,7 +9,7 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-internal interface TodoDao {
+interface TodoDao {
 
     @Query(value = "SELECT * FROM todoitems")
     fun getAllTodoItems(): Flow<List<TodoItemEntity>>

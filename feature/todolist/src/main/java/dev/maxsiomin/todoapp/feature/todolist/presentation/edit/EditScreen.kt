@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,7 +74,7 @@ import dev.maxsiomin.todoapp.feature.todolist.domain.model.Priority
 import kotlinx.datetime.LocalDate
 
 @Composable
-fun EditScreen(navController: NavHostController, showSnackbar: SnackbarCallback) {
+internal fun EditScreen(navController: NavHostController, showSnackbar: SnackbarCallback) {
 
     val viewModel: EditViewModel = hiltViewModel()
 
@@ -167,7 +168,7 @@ private fun EditScreenMainContent(
                 .background(AppTheme.colors.supportSeparator)
         )
         Spacer(modifier = Modifier.height(12.dp))
-        DeleteTextAndIcon(onEvent)
+        DeleteTextAndIcon(onEvent, Modifier.testTag("hello2"))
     }
 }
 
@@ -250,7 +251,7 @@ private fun DescriptionTextField(
         TextField(
             textStyle = AppTheme.typography.body,
             modifier = modifier
-                .fillMaxWidth(),
+                .fillMaxWidth().testTag("description text field"),
             value = state.description,
             onValueChange = {
                 onEvent(EditViewModel.Event.OnDescriptionChanged(it))

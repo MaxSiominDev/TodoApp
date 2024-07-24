@@ -69,6 +69,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.google.truth)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -90,5 +91,12 @@ dependencies {
     // Hilt for DI
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.android.compiler)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
+
+    androidTestImplementation(libs.bundles.ktor)
+    androidTestImplementation(libs.ktor.client.mock)
+    androidTestImplementation(libs.bundles.room)
+    ksp(libs.androidx.room.room.compiler)
 
 }

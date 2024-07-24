@@ -14,7 +14,7 @@ internal data class TodoItem(
     val lastUpdatedBy: String,
 )
 
-internal sealed class Priority {
+sealed class Priority {
     data object Low : Priority()
     data object Default : Priority()
     data object High : Priority()
