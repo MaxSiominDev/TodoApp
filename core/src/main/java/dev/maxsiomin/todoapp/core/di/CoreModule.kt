@@ -52,28 +52,6 @@ internal interface CoreModule {
 
     companion object {
 
-        @Singleton
-        @Provides
-        fun provideHttpClient(repository: ConfigRepository): HttpClient {
-            val token: String? = repository.getToken()
-            return HttpClient(Android) {
-                install(ContentNegotiation) {
-                    json(Json {
-                        ignoreUnknownKeys = true
-                    })
-                }
-                install(DefaultRequest) {
-                    header(HttpHeaders.Authorization, "OAuth $token")
-                    header(HttpHeaders.ContentType, ContentType.Application.Json)
-                    header(HttpHeaders.Accept, ContentType.Application.Json)
-                }
-                install(HttpRequestRetry) {
-                    retryOnServerErrors(maxRetries = 2)
-                    exponentialDelay()
-                }
-            }
-        }
-
         @Provides
         fun provideDispatcherProvider(): DispatcherProvider {
             return StandardDispatchers

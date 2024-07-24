@@ -48,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.maxsiomin.common.extensions.now
@@ -171,6 +172,7 @@ private fun TopBar(
     )
     Surface(modifier = Modifier.shadow(elevation = elevationAnimation)) {
         LargeTopAppBar(
+            modifier = Modifier,
             title = {
                 TopBarContent(
                     state = state,
@@ -207,7 +209,9 @@ private fun TopBarContent(
             AnimatedVisibility(visible = expanded) {
                 Text(
                     text = stringResource(R.string.completed, state.completedCount),
-                    style = AppTheme.typography.body.copy(color = AppTheme.colors.labelTertiary),
+                    style = AppTheme.typography.body.copy(
+                        color = AppTheme.colors.labelTertiary,
+                    ),
                 )
             }
         }

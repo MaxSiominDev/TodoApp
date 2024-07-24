@@ -65,7 +65,6 @@ dependencies {
     implementation(libs.bundles.compose)
 
     testImplementation(libs.junit)
-    androidTestImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -94,5 +93,10 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     androidTestImplementation(libs.hilt.android.testing)
     kaptAndroidTest(libs.hilt.android.compiler)
+
+    androidTestImplementation(libs.bundles.ktor)
+    androidTestImplementation(libs.ktor.client.mock)
+    androidTestImplementation(libs.bundles.room)
+    ksp(libs.androidx.room.room.compiler)
 
 }

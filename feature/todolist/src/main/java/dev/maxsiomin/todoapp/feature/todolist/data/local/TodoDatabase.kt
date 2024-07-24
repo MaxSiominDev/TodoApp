@@ -10,7 +10,7 @@ import dev.maxsiomin.todoapp.feature.todolist.data.local.migrations.MIGRATION_1_
 /** Database to manage everything related to todo items */
 @Database(entities = [TodoItemEntity::class, DeletedItem::class], version = 4)
 @TypeConverters(value = [PriorityConverters::class, LocalDateConverters::class])
-internal abstract class TodoDatabase : RoomDatabase() {
+abstract class TodoDatabase : RoomDatabase() {
 
     abstract val todoDao: TodoDao
 
